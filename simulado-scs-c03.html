@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Certified Security – Specialty (SCS-C03) — Exame de prática</title>
+<style>
+:root{
+  --ink:#232f3e;
+  --ink-deep:#16212f;
+  --orange:#ff9900;
+  --blue:#146eb4;
+  --blue-tint:#f1f8fe;
+  --green:#1d8102;
+  --green-tint:#f2f8f0;
+  --red:#d13212;
+  --red-tint:#fdf3f1;
+  --line:#d5dbdb;
+  --line-soft:#eaeded;
+  --bg:#f2f3f3;
+  --surface:#ffffff;
+  --text:#16191f;
+  --muted:#5f6b7a;
+  --sans:"Amazon Ember","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-visible,.opt:focus-visible{
+  outline:2px solid var(--blue);outline-offset:2px;
+}
+
+/* ---------- app chrome ---------- */
+.topbar{
+  background:var(--ink);
+  color:#fff;
+  border-bottom:3px solid var(--orange);
+  padding:10px 18px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.brand{display:flex;flex-direction:column;line-height:1.2;margin-right:auto}
+.brand .eyebrow{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#c8cdd4;font-weight:700;
+}
+.brand .name{font-size:15px;font-weight:700;letter-spacing:.01em}
+.meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{
+  background:#31435a;border:1px solid #46596f;border-radius:2px;
+  padding:5px 10px;font-size:12px;letter-spacing:.02em;white-space:nowrap;
+}
+.chip b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700;color:#fff}
+.ghost{
+  background:transparent;border:1px solid #6c7d92;color:#fff;border-radius:2px;
+  padding:5px 11px;font-size:12px;
+}
+.ghost:hover{background:#31435a}
+
+.progress{height:4px;background:#e1e4e8}
+.progress span{display:block;height:100%;background:var(--orange);width:0;transition:width .25s ease}
+
+.wrap{max-width:1080px;margin:0 auto;padding:20px 18px 120px}
+
+/* ---------- start screen ---------- */
+.intro{background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:28px}
+.intro h1{font-size:26px;line-height:1.25;margin:6px 0 4px;letter-spacing:-.01em}
+.intro .sub{color:var(--muted);margin:0 0 22px}
+.rule{height:1px;background:var(--line-soft);margin:22px 0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+.fact{background:var(--surface);padding:14px 16px}
+.fact dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px}
+.fact dd{margin:0;font-size:17px;font-weight:700;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.rules{margin:0;padding-left:20px;color:#3d4855}
+.rules li{margin-bottom:7px}
+.toggles{display:flex;flex-direction:column;gap:10px;margin:20px 0 24px}
+.toggle{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.toggle input{margin:3px 0 0;accent-color:var(--blue);width:16px;height:16px}
+.toggle span small{display:block;color:var(--muted)}
+
+.primary{
+  background:var(--orange);border:1px solid #e88b00;color:#16191f;font-weight:700;
+  border-radius:2px;padding:11px 22px;
+}
+.primary:hover{background:#ffad33}
+.primary:disabled{background:#e9ebed;border-color:var(--line);color:#9aa4b0;cursor:not-allowed}
+.secondary{
+  background:var(--surface);border:1px solid #59626e;color:var(--ink);font-weight:700;
+  border-radius:2px;padding:11px 18px;
+}
+.secondary:hover{background:#f5f7f8}
+.secondary:disabled{border-color:var(--line);color:#9aa4b0;cursor:not-allowed;background:var(--surface)}
+
+/* ---------- question ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:2px}
+.card-head{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 20px;border-bottom:1px solid var(--line-soft);
+}
+.qnum{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.tag{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  border:1px solid var(--line);border-radius:2px;padding:3px 8px;color:#3d4855;background:#fafbfc;
+}
+.flagbtn{
+  margin-left:auto;background:none;border:1px solid var(--line);border-radius:2px;
+  padding:4px 10px;font-size:12px;color:var(--muted);
+}
+.flagbtn[aria-pressed="true"]{background:#fff8ec;border-color:var(--orange);color:#8a5a00;font-weight:700}
+.card-body{padding:20px}
+.stem{margin:0 0 4px;white-space:pre-wrap}
+.hint{color:var(--muted);font-size:13px;margin:14px 0 0}
+pre.code{
+  background:#f7f8f9;border:1px solid var(--line-soft);border-left:3px solid var(--ink);
+  border-radius:2px;padding:12px 14px;overflow-x:auto;
+  font-family:var(--mono);font-size:12.5px;line-height:1.5;margin:14px 0 0;
+}
+
+.opts{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;
+  border:1px solid var(--line);border-left:3px solid var(--line);border-radius:2px;
+  padding:12px 14px;background:var(--surface);cursor:pointer;
+  transition:background .12s ease,border-color .12s ease;
+}
+.opt:hover{background:#fafbfc}
+.opt input{margin:2px 0 0;accent-color:var(--blue);width:16px;height:16px;flex:none}
+.opt .letter{font-family:var(--mono);font-weight:700;flex:none;color:var(--muted);min-width:14px}
+.opt .txt{flex:1}
+.opt.sel{border-color:var(--blue);border-left-color:var(--blue);background:var(--blue-tint)}
+.opt pre.code{margin:8px 0 0;background:#fff}
+.locked .opt{cursor:default}
+.opt.ok{border-color:var(--green);border-left-color:var(--green);background:var(--green-tint)}
+.opt.bad{border-color:var(--red);border-left-color:var(--red);background:var(--red-tint)}
+.mark{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;flex:none;align-self:center}
+.mark.ok{color:var(--green)}
+.mark.bad{color:var(--red)}
+
+/* ordering + matching */
+.pairs{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.pair{border:1px solid var(--line);border-left:3px solid var(--line);border-radius:2px;padding:12px 14px;background:var(--surface)}
+.pair.ok{border-color:var(--green);border-left-color:var(--green);background:var(--green-tint)}
+.pair.bad{border-color:var(--red);border-left-color:var(--red);background:var(--red-tint)}
+.pair .plabel{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px}
+.pair .ptext{margin-bottom:10px}
+.pair select{
+  width:100%;padding:9px 10px;border:1px solid #7d8998;border-radius:2px;background:var(--surface);
+  font-family:inherit;font-size:14px;color:var(--text);
+}
+.pair select:disabled{background:#f7f8f9;color:#3d4855}
+.answerline{margin-top:8px;font-size:13px;color:var(--green);font-weight:700}
+.answerline.bad{color:var(--red)}
+
+/* verdict */
+.verdict{
+  margin-top:18px;border:1px solid;border-radius:2px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;font-weight:700;
+}
+.verdict.ok{border-color:var(--green);background:var(--green-tint);color:#155c02}
+.verdict.bad{border-color:var(--red);background:var(--red-tint);color:#9c2610}
+.verdict .badge{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid currentColor;border-radius:2px;padding:2px 7px;
+}
+
+/* ---------- action bar ---------- */
+.actions{
+  position:fixed;left:0;right:0;bottom:0;background:var(--surface);
+  border-top:1px solid var(--line);padding:12px 18px;z-index:20;
+}
+.actions-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.counter{font-size:13px;color:var(--muted);margin-right:auto;font-variant-numeric:tabular-nums}
+.counter b{color:var(--text)}
+
+/* ---------- navigator ---------- */
+.nav-panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:2px;margin-bottom:16px;padding:16px 18px;
+}
+.nav-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px}
+.nav-legend i{display:inline-block;width:10px;height:10px;border:1px solid var(--line);margin-right:5px;vertical-align:middle}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.gcell{
+  border:1px solid var(--line);background:var(--surface);border-radius:2px;padding:7px 0;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:#3d4855;position:relative;
+}
+.gcell.ok{border-color:var(--green);background:var(--green-tint);color:#155c02}
+.gcell.bad{border-color:var(--red);background:var(--red-tint);color:#9c2610}
+.gcell.here{outline:2px solid var(--ink);outline-offset:0}
+.gcell.flag::after{content:"";position:absolute;top:2px;right:2px;width:5px;height:5px;background:var(--orange);border-radius:50%}
+
+/* ---------- results ---------- */
+.score{background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:28px}
+.score h2{margin:0 0 2px;font-size:24px;letter-spacing:-.01em}
+.bigscore{font-family:var(--mono);font-size:56px;font-weight:700;line-height:1;letter-spacing:-.03em;margin:18px 0 6px}
+.bar{height:10px;background:var(--line-soft);border-radius:2px;overflow:hidden;position:relative;margin:14px 0 6px}
+.bar span{display:block;height:100%;background:var(--green)}
+.bar.fail span{background:var(--red)}
+.bar em{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);left:75%}
+.barlabel{font-size:12px;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin-top:22px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-soft)}
+th{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+td.st-ok{color:var(--green);font-weight:700}
+td.st-bad{color:var(--red);font-weight:700}
+td.st-none{color:var(--muted)}
+.linkish{background:none;border:none;color:var(--blue);text-decoration:underline;padding:0;font-size:13px}
+
+@media (max-width:640px){
+  .wrap{padding:14px 12px 130px}
+  .intro,.score{padding:20px 16px}
+  .card-body{padding:16px}
+  .bigscore{font-size:44px}
+  .brand .name{font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="eyebrow">AWS Certification · Exame de prática</span>
+    <span class="name">AWS Certified Security – Specialty (SCS-C03)</span>
+  </div>
+  <div class="meta" id="meta" hidden>
+    <span class="chip">Tempo restante <b id="clock">170:00</b></span>
+    <span class="chip">Questão <b id="pos">1/85</b></span>
+    <button class="ghost" id="btnNav" aria-expanded="false">Revisar questões</button>
+    <button class="ghost" id="btnEnd">Finalizar</button>
+  </div>
+</header>
+<div class="progress"><span id="pbar"></span></div>
+
+<main class="wrap" id="root"></main>
+
+<div class="actions" id="bar" hidden>
+  <div class="actions-in">
+    <span class="counter" id="counter"></span>
+    <button class="secondary" id="btnPrev">Anterior</button>
+    <button class="primary" id="btnConfirm">Confirmar resposta</button>
+    <button class="secondary" id="btnNext">Próxima</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+{
+  type:"single",
+  stem:"Um engenheiro de segurança está solucionando problemas em uma função AWS Lambda chamada MyLambdaFunction. A função está encontrando um erro ao tentar ler objetos em um bucket do Amazon S3 chamado DOC-EXAMPLE-BUCKET. O bucket do S3 possui a seguinte política:",
+  code:`{
+    "Effect": "Allow",
+    "Principal": {
+        "Service": "lambda.amazonaws.com"
+    },
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::DOC-EXAMPLE-BUCKET",
+    "Condition": {
+        "ArnLike": {
+            "aws:SourceArn": "arn:aws:lambda:::function:MyLambdaFunction"
+        }
+    }
+}`,
+  ask:"Qual alteração o engenheiro de segurança deve fazer na política para garantir que a função Lambda possa ler os objetos do bucket?",
+  options:[
+    {id:"A",text:'Remova o elemento Condition. Altere o elemento Principal para: { "AWS": "arn:aws:lambda:::function:MyLambdaFunction" }'},
+    {id:"B",text:'Altere o elemento Action para: [ "s3:GetObject*", "s3:GetBucket*" ]'},
+    {id:"C",text:'Altere o elemento Resource para "arn:aws:s3:::DOC-EXAMPLE-BUCKET/*".'},
+    {id:"D",text:'Altere o elemento Resource para "arn:aws:lambda:::function:MyLambdaFunction". Altere o elemento Principal para: { "Service": "s3.amazonaws.com" }'}
+  ],
+  answer:["C"]
+},
+{
+  type:"order",
+  stem:"Uma empresa está desenvolvendo um aplicativo web que precisa autenticar usuários externos em vários microsserviços hospedados no Amazon Elastic Container Service (Amazon ECS). A solução deve usar credenciais temporárias e minimizar a sobrecarga de gerenciamento necessária para manter bancos de dados de usuários.",
+  ask:"Selecione e ordene as etapas corretas da lista a seguir para implementar uma estratégia de autenticação segura que atenda a esses requisitos. Selecione cada etapa uma vez ou nenhuma.",
+  pool:[
+    "Configure os grupos de usuários do Amazon Cognito para autenticação de usuários.",
+    "Configure uma função do IAM para cada microsserviço. Conceda a cada função as permissões apropriadas.",
+    "Implemente uma API HTTP do Amazon API Gateway com autorizadores do AWS Lambda para validar tokens antes de encaminhar as solicitações para os microsserviços.",
+    "Crie uma tabela do Amazon DynamoDB para armazenar as credenciais de usuário de cada microsserviço.",
+    "Crie um cliente de aplicativo do Amazon Cognito para interagir com o aplicativo web.",
+    "Configure o AWS IAM Identity Center para conceder acesso aos usuários aos microsserviços."
+  ],
+  answer:[0,4,2]
+},
+{
+  type:"single",
+  stem:"Um administrador de conta da AWS criou um grupo do IAM e aplicou a seguinte política gerenciada para exigir que cada usuário individual se autentique usando autenticação multifator:",
+  code:`{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ec2:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "BlockAnyAccessUnlessSignedInWithMFA",
+            "Effect": "Deny",
+            "Action": "ec2:*",
+            "Resource": "*",
+            "Condition": {
+                "BoolIfExists": {
+                    "aws:MultiFactorAuthPresent": false
+                }
+            }
+        }
+    ]
+}`,
+  ask:"Após implementar a política, o administrador recebe relatos de que os usuários não conseguem executar comandos do Amazon EC2 usando a AWS CLI. O que o administrador deve fazer para resolver esse problema, mantendo a exigência de autenticação multifator?",
+  options:[
+    {id:"A",text:"Altere o valor de aws:MultiFactorAuthPresent para true."},
+    {id:"B",text:"Instrua os usuários a executar o comando CLI aws sts get-session-token e a passar os parâmetros --serial-number e --token-code da autenticação multifator. Use esses valores resultantes para fazer chamadas de API/CLI."},
+    {id:"C",text:"Implemente o acesso federado à API/CLI usando SAML 2.0 e, em seguida, configure o provedor de identidade para impor a autenticação multifator."},
+    {id:"D",text:"Crie uma função e imponha a autenticação multifator na política de confiança da função. Instrua os usuários a executar o comando CLI sts assume-role e passar os parâmetros --serial-number e --token-code. Armazene os valores resultantes em variáveis de ambiente. Adicione sts:AssumeRole à propriedade NotAction na política."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Organizations com o SCP padrão. A empresa precisa restringir o uso da AWS para todas as contas da AWS que estejam em uma Unidade Organizacional (UO) específica. Com exceção de alguns serviços globais desejados, o uso da AWS deve ocorrer somente na região eu-west-1 para todas as contas na UO. Um engenheiro de segurança deve criar um SCP que aplique a restrição às contas existentes e a quaisquer novas contas na UO.",
+  ask:"Qual SCP atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "DenyNonDefaultRegions",
+        "Effect": "Deny",
+        "NotAction": [ <Desired Global Services> ],
+        "Resource": "*",
+        "Condition": {
+            "StringEquals": {
+                "aws:RequestedRegion": [ "eu-west-1" ]
+            }
+        }
+    }]
+}`},
+    {id:"B",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "DenyNonDefaultRegions",
+        "Effect": "Allow",
+        "Action": [ <Desired Global Services> ],
+        "Resource": "*",
+        "Condition": {
+            "StringEquals": {
+                "aws:RequestedRegion": [ "eu-west-1" ]
+            }
+        }
+    }]
+}`},
+    {id:"C",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "DenyNonDefaultRegions",
+        "Effect": "Deny",
+        "NotAction": [ <Desired Global Services> ],
+        "Resource": "*",
+        "Condition": {
+            "StringNotEquals": {
+                "aws:RequestedRegion": [ "eu-west-1" ]
+            }
+        }
+    }]
+}`},
+    {id:"D",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "DenyNonDefaultRegions",
+        "Effect": "Allow",
+        "NotAction": [ <Desired Global Services> ],
+        "Resource": "*",
+        "Condition": {
+            "StringNotEquals": {
+                "aws:RequestedRegion": [ "eu-west-1" ]
+            }
+        }
+    }]
+}`}
+  ],
+  answer:["C"]
+},
+{
+  type:"order",
+  stem:"Um engenheiro de segurança precisa implementar o AWS IAM Identity Center com um provedor de identidade (IdP) externo.",
+  ask:"Selecione e ordene as etapas corretas da lista a seguir para atender a esse requisito. Selecione cada etapa uma vez ou nenhuma.",
+  pool:[
+    "Configure o IdP externo como a fonte de identidade no IAM Identity Center.",
+    "Crie uma função do IAM com uma política de confiança que especifique o endpoint da API do IdP.",
+    "Habilite o provisionamento automático nas configurações do IAM Identity Center.",
+    "Habilite o provisionamento automático no IdP externo.",
+    "Obtenha os metadados SAML do IAM Identity Center.",
+    "Obtenha os metadados SAML do IdP externo."
+  ],
+  answer:[5,0,2]
+},
+{
+  type:"single",
+  stem:"Qual o efeito da seguinte política de chave do AWS Key Management Service (AWS KMS) associada a uma chave gerenciada pelo cliente?",
+  code:`{
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::111122223333:role/ExampleRole"
+  },
+  "Action": [
+    "kms:Encrypt",
+    "kms:Decrypt",
+    "kms:GenerateDataKey*",
+    "kms:CreateGrant",
+    "kms:ListGrants"
+  ],
+  "Resource": "*",
+  "Condition": {
+    "StringEquals": {
+      "kms:ViaService": [
+        "workmail.us-west-2.amazonaws.com",
+        "ses.us-west-2.amazonaws.com"
+      ]
+    }
+  }
+}`,
+  options:[
+    {id:"A",text:"O Amazon WorkMail e o Amazon Simple Email Service (Amazon SES) delegaram permissões de criptografia e descriptografia do KMS para a entidade ExampleRole na conta 111122223333."},
+    {id:"B",text:"A entidade ExampleRole pode criptografar e descriptografar de forma transparente as trocas de e-mail especificamente entre ExampleRole e a AWS."},
+    {id:"C",text:"A chave gerenciada pelo cliente pode ser usada para criptografar e descriptografar somente quando a entidade principal for ExampleRole e quando a solicitação vier do Amazon WorkMail ou do Amazon Simple Email Service (Amazon SES) na região da AWS especificada."},
+    {id:"D",text:"A política de chave permite que o Amazon WorkMail ou o Amazon Simple Email Service (Amazon SES) criptografem ou descriptografem em nome da ExampleRole qualquer chave gerenciada pelo cliente na conta."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa deseja negar o acesso de um usuário federado específico, chamado Bob, a um bucket do Amazon S3 chamado DOC-EXAMPLE-BUCKET. A empresa deseja atender a esse requisito usando uma política de bucket. A empresa também precisa garantir que essa política de bucket afete apenas as permissões de Bob no S3. Quaisquer outras permissões que Bob possua devem permanecer intactas.",
+  ask:"Qual política a empresa deve usar para atender a esses requisitos?",
+  options:[
+    {id:"A",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Principal": {"AWS": "arn:aws:sts::account-id:federated-user/Bob"},
+        "Effect": "Allow",
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::DOC-EXAMPLE-BUCKET"
+    }
+}`},
+    {id:"B",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Principal": {"AWS": "arn:aws:sts::account-id:federated-user/Bob"},
+        "Effect": "Deny",
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::DOC-EXAMPLE-BUCKET"
+    }
+}`},
+    {id:"C",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Principal": {"AWS": "arn:aws:iam::account-id:user/Bob"},
+        "Effect": "Deny",
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::DOC-EXAMPLE-BUCKET"
+    }
+}`},
+    {id:"D",text:"",code:`{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Principal": {"AWS": "arn:aws:sts::account-id:assumed-role/Bob/role-session-name"},
+        "Effect": "Deny",
+        "Action": "s3:*",
+        "Resource": "arn:aws:s3:::DOC-EXAMPLE-BUCKET"
+    }
+}`}
+  ],
+  answer:["B"]
+},
+{
+  type:"match",
+  stem:"Uma empresa está projetando sua estratégia de monitoramento de segurança para uma carga de trabalho sensível existente na AWS. A equipe de segurança identificou vários cenários que exigem estratégias de monitoramento.",
+  ask:"Selecione o cenário de monitoramento correto para cada estratégia de monitoramento. Selecione cada cenário apenas uma vez.",
+  pool:[
+    "Isolar automaticamente as instâncias do Amazon EC2 quando as descobertas de detecção de malware forem confirmadas.",
+    "Correlacionar descobertas de segurança de vários serviços de detecção da AWS para identificar ataques em várias etapas.",
+    "Detectar quando usuários privilegiados realizam um volume excepcionalmente alto de operações de exclusão de recursos.",
+    "Identificar padrões de mais de 50 tentativas de autenticação com falha de endereços IP específicos em 1 hora.",
+    "Monitorar padrões de tráfego de rede, especialmente grandes transferências de dados para endereços IP externos fora do horário comercial normal."
+  ],
+  prompts:[
+    {t:"Configurar logs de fluxo da VPC com consultas do Amazon CloudWatch Logs Insights para analisar o volume de tráfego e os padrões de destino durante janelas de tempo específicas.",a:4},
+    {t:"Criar filtros de métrica do Amazon CloudWatch nos logs da aplicação para rastrear as taxas de falha de autenticação de cada endereço IP de origem com agregação horária.",a:3},
+    {t:"Habilitar o AWS CloudTrail Insights para análise da taxa de chamadas de API a fim de estabelecer linhas de base e, em seguida, detectar padrões anômalos de atividade de API.",a:2},
+    {t:"Implementar insights personalizados do AWS Security Hub com regras do Amazon EventBridge para invocar funções automatizadas do AWS Lambda para resposta coordenada a incidentes.",a:0},
+    {t:"Habilitar o Amazon GuardDuty e o AWS Security Hub com agregação de descobertas de várias contas e de vários serviços de detecção.",a:1}
+  ]
+},
+{
+  type:"single",
+  stem:"Uma empresa precisa de uma solução para proteger dados críticos contra exclusão permanente. Os dados estão armazenados em buckets do Amazon S3. A empresa precisa replicar os objetos do S3 da região primária da AWS para uma região secundária para atender aos requisitos de recuperação de desastres. A empresa também deve garantir que usuários com acesso de administrador não possam excluir permanentemente os dados na região secundária.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Configure o AWS Backup para realizar backups do S3 entre regiões. Selecione um cofre de backup na região secundária. Habilite o bloqueio de cofre do AWS Backup no modo de governança para os backups na região secundária."},
+    {id:"B",text:"Implemente o bloqueio de objetos S3 no modo de conformidade na região primária. Configure a replicação do S3 para replicar os objetos para um bucket do S3 na região secundária."},
+    {id:"C",text:"Configure a replicação do S3 para replicar os objetos para um bucket do S3 na região secundária. Crie uma política de bucket do S3 para negar a ação s3:ReplicateDelete no bucket do S3 na região secundária."},
+    {id:"D",text:"Configure a replicação do S3 para replicar os objetos para um bucket do S3 na região secundária. Configure o versionamento de objetos do S3 no bucket do S3 na região secundária."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança está respondendo a um incidente que afetou uma conta da AWS. O ataque criou cargas de trabalho distribuídas por várias regiões da AWS. O engenheiro de segurança conteve o ataque e removeu todos os recursos de computação e armazenamento de todas as regiões afetadas. No entanto, o invasor também criou uma chave do AWS KMS. A política da chave do KMS permite explicitamente permissões kms:* para as entidades principais do IAM. A chave estava programada para ser excluída no dia anterior. Contudo, a chave ainda está habilitada e utilizável. A chave tem o ARN arn:aws:kms:us-east-2:123456789012:key/mrk-0bb0212cd9864fdea0dca26efb5670. O engenheiro de segurança precisa excluir a chave o mais rápido possível.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Faça login na conta usando as credenciais de usuário root. Em seguida, envie novamente a solicitação de exclusão da chave KMS com um período de espera de 7 dias."},
+    {id:"B",text:"Identifique as outras regiões onde o ID da chave KMS está presente e agende a exclusão da chave em 7 dias."},
+    {id:"C",text:"Atualize a entidade de segurança do IAM para permitir permissões kms:* no ARN da chave KMS. Reenvie a solicitação de exclusão para a chave KMS com um período de espera de 7 dias."},
+    {id:"D",text:"Desative a chave KMS. Emita novamente a solicitação de exclusão da chave KMS em 30 dias."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa instalou um aplicativo de terceiros que é distribuído em várias instâncias do Amazon EC2 e servidores locais. Ocasionalmente, a equipe de TI da empresa precisa usar SSH para se conectar a cada máquina e realizar tarefas de manutenção de software. Fora desses horários, as máquinas devem estar completamente isoladas do restante da rede. A empresa não deseja manter nenhuma chave SSH. Além disso, a empresa deseja pagar apenas pelas horas de uso da máquina quando houver uma conexão SSH.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Crie um host bastion com encaminhamento de portas para conectar-se às máquinas."},
+    {id:"B",text:"Configure o Gerenciador de Sessões do AWS Systems Manager para permitir conexões temporárias."},
+    {id:"C",text:"Use o AWS CloudShell para criar conexões sem servidor."},
+    {id:"D",text:"Configure um endpoint de interface VPC para cada máquina para conexão privada."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa diversos aplicativos no Amazon Elastic Kubernetes Service (Amazon EKS). A empresa precisa de uma solução para detectar quaisquer riscos de segurança no Kubernetes, monitorando os logs de auditoria do Amazon EKS, além de eventos do sistema operacional, da rede e dos arquivos. A solução deve enviar alertas por e-mail para quaisquer riscos identificados a uma lista de discussão associada à equipe de segurança.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Implante o AWS Security Hub e habilite os padrões de segurança que incluem controles do EKS. Crie um tópico do Amazon SNS e defina a lista de e-mails da equipe de segurança como assinante. Use uma regra do Amazon EventBridge para enviar eventos relevantes do Security Hub para o tópico do SNS."},
+    {id:"B",text:"Habilite a verificação de imagens de contêiner do Amazon Inspector. Configure o Amazon Detective para analisar os logs de segurança do EKS. Crie grupos de logs do Amazon CloudWatch para os logs de auditoria do EKS. Use uma função do AWS Lambda para processar os logs e enviar alertas por e-mail para a equipe de segurança."},
+    {id:"C",text:"Habilite o Amazon GuardDuty. Habilite a proteção do EKS e o monitoramento em tempo de execução para o Amazon EKS no GuardDuty. Crie um tópico do Amazon SNS e defina a lista de e-mails da equipe de segurança como assinante. Use uma regra do Amazon EventBridge para enviar eventos relevantes do GuardDuty para o tópico do SNS."},
+    {id:"D",text:"Instale o Agente do AWS Systems Manager (Agente SSM) em todos os nós do EKS. Configure o Amazon CloudWatch Logs para coletar os logs de auditoria do EKS. Crie um tópico do Amazon SNS e defina a lista de e-mails da equipe de segurança como assinante. Configure um alarme do CloudWatch para publicar uma mensagem no tópico do SNS quando novos logs de auditoria forem gerados."}
+  ],
+  answer:["C"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma empresa permite que os usuários baixem seu aplicativo móvel em seus telefones. O aplicativo é baseado em MQTT e se conecta ao AWS IoT Core para se inscrever em tópicos específicos relacionados ao cliente. Recentemente, a empresa descobriu que alguns invasores maliciosos estão tentando instalar um cavalo de Troia em telefones celulares legítimos. O cavalo de Troia se passa pelo aplicativo autêntico e usa um ID de cliente com caracteres especiais injetados para obter acesso a tópicos fora do escopo de privilégios do cliente.",
+  ask:"Qual combinação de ações a empresa deve tomar para prevenir essa ameaça? (Escolha duas.)",
+  options:[
+    {id:"A",text:"No aplicativo, use o nome do dispositivo IoT como ID do cliente para conectar o dispositivo ao AWS IoT Core."},
+    {id:"B",text:"No aplicativo, adicione uma verificação de ID do cliente. Desconecte-se do servidor se algum caractere especial for detectado."},
+    {id:"C",text:"Aplique uma política do AWS IoT Core que permita \"AWSIoTWirelessDataAccess\" com a entidade definida como \"client/${iot:Connection.Thing.ThingName}\"."},
+    {id:"D",text:"Aplique uma política do AWS IoT Core ao dispositivo para permitir \"iot:Connect\" com o recurso definido como \"client/${iot:ClientId}\"."},
+    {id:"E",text:"Aplique uma política do AWS IoT Core ao dispositivo para permitir \"iot:Connect\" com o recurso definido como \"client/${iot:Connection.Thing.ThingName}\"."}
+  ],
+  answer:["A","E"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança deseja avaliar as alterações de configuração em um recurso específico da AWS para garantir que ele atenda aos padrões de conformidade. No entanto, ele está preocupado com uma situação em que várias alterações de configuração são feitas no recurso em rápida sucessão. O engenheiro de segurança deseja registrar apenas a configuração mais recente desse recurso para indicar o impacto cumulativo do conjunto de alterações.",
+  ask:"Qual solução atenderá a esse requisito da maneira mais eficiente operacionalmente?",
+  options:[
+    {id:"A",text:"Utilize o AWS CloudTrail para detectar as alterações de configuração, filtrando as chamadas de API para monitorar as mudanças. Use a chamada de API mais recente para indicar o impacto cumulativo de múltiplas chamadas."},
+    {id:"B",text:"Utilize o AWS Config para detectar as alterações de configuração e registrar a configuração mais recente em caso de múltiplas alterações."},
+    {id:"C",text:"Utilize o Amazon CloudWatch para detectar as alterações de configuração, filtrando as chamadas de API para monitorar as mudanças. Use a chamada de API mais recente para indicar o impacto cumulativo de múltiplas chamadas."},
+    {id:"D",text:"Utilize o AWS Cloud Map para detectar as alterações de configuração. Gere um relatório das alterações de configuração a partir do AWS Cloud Map para acompanhar o estado mais recente usando uma janela de tempo deslizante."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança precisa implementar uma solução para criar e controlar as chaves que uma empresa utiliza para operações criptográficas. O engenheiro de segurança deve criar chaves simétricas, cujo material de chave é gerado e utilizado em um repositório de chaves personalizado, com suporte de um cluster AWS CloudHSM. O engenheiro de segurança utilizará pares de chaves de dados simétricas e assimétricas para uso local em aplicações. Ele também deve auditar o uso das chaves.",
+  ask:"Como o engenheiro de segurança pode atender a esses requisitos?",
+  options:[
+    {id:"A",text:"Para criar as chaves, utilize o AWS Key Management Service (AWS KMS) e os armazenamentos de chaves personalizados com o cluster CloudHSM. Para auditoria, utilize o Amazon Athena."},
+    {id:"B",text:"Para criar as chaves, utilize o Amazon S3 e os armazenamentos de chaves personalizados com o cluster CloudHSM. Para auditoria, utilize o AWS CloudTrail."},
+    {id:"C",text:"Para criar as chaves, utilize o AWS Key Management Service (AWS KMS) e os armazenamentos de chaves personalizados com o cluster CloudHSM. Para auditoria, utilize o Amazon GuardDuty."},
+    {id:"D",text:"Para criar as chaves, utilize o AWS Key Management Service (AWS KMS) e os armazenamentos de chaves personalizados com o cluster CloudHSM. Para auditoria, utilize o AWS CloudTrail."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa um aplicativo em instâncias do Amazon EC2 em um grupo de Auto Scaling. O aplicativo armazena logs localmente. Um engenheiro de segurança percebeu que os logs foram perdidos após um evento de redução de escala (scale-in). O engenheiro de segurança precisa recomendar uma solução para garantir a durabilidade e a disponibilidade dos dados de log. Todos os logs devem ser mantidos por, no mínimo, 1 ano para fins de auditoria.",
+  ask:"O que o engenheiro de segurança deve recomendar?",
+  options:[
+    {id:"A",text:"No ciclo de vida do Auto Scaling, adicione um gancho para criar e anexar um volume de log do Amazon EBS sempre que uma instância EC2 for criada. Quando a instância for encerrada, o volume EBS poderá ser anexado a outra instância para revisão dos logs."},
+    {id:"B",text:"Crie um sistema de arquivos Amazon EFS e adicione um comando na seção de dados do usuário do modelo de inicialização do Auto Scaling para montar o sistema de arquivos EFS durante a criação da instância EC2. Configure um processo na instância para copiar os logs uma vez por dia de um volume do Amazon EBS da instância para um diretório no sistema de arquivos EFS."},
+    {id:"C",text:"Adicione um agente do Amazon CloudWatch à AMI usada no grupo de Auto Scaling. Configure o agente do CloudWatch para enviar os logs para o Amazon CloudWatch Logs para revisão."},
+    {id:"D",text:"No ciclo de vida do Auto Scaling, adicione um gancho de ciclo de vida na transição de estado de término e alerte a equipe de engenharia usando uma notificação de ciclo de vida para o Amazon SNS. Configure o gancho para permanecer no estado Terminating:Wait por 1 hora para permitir a revisão manual dos logs de segurança antes do encerramento da instância."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza a AWS para executar um processo de análise de longa duração em dados armazenados em buckets do Amazon S3. O processo é executado em uma frota de instâncias do Amazon EC2 que fazem parte de um grupo de Auto Scaling. As instâncias do EC2 estão implantadas em uma sub-rede privada de uma VPC sem acesso à internet. As instâncias do EC2 e os buckets do S3 estão na mesma conta da AWS. As instâncias do EC2 acessam os buckets do S3 por meio de um endpoint de gateway do S3 com a política de acesso padrão. Cada instância do EC2 está associada a uma função de perfil de instância com uma política que permite explicitamente as ações s3:GetObject e s3:PutObject apenas para os buckets do S3 necessários. A empresa descobre que uma ou mais instâncias do EC2 foram comprometidas e estão exfiltrando dados para um bucket do S3 localizado fora da organização da empresa no AWS Organizations. Um engenheiro de segurança precisa implementar uma solução para interromper essa exfiltração de dados e manter o trabalho de processamento do EC2 em funcionamento.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Atualize a política no endpoint do gateway S3 para permitir as ações do S3 somente se os valores das chaves de condição aws:ResourceOrgID e aws:PrincipalOrgID corresponderem aos valores da empresa."},
+    {id:"B",text:"Atualize a política na função do perfil da instância para permitir as ações do S3 somente se o valor da chave de condição aws:ResourceOrgID corresponder ao valor da empresa."},
+    {id:"C",text:"Adicione uma regra de ACL de rede à sub-rede das instâncias EC2 para bloquear conexões de saída na porta 443."},
+    {id:"D",text:"Aplique uma SCP na conta da AWS para permitir as ações do S3 somente se os valores das chaves de condição aws:ResourceOrgID e aws:PrincipalOrgID corresponderem aos valores da empresa."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa sofreu recentemente um ataque malicioso em seu ambiente baseado em nuvem. A empresa conseguiu conter e erradicar o ataque. Um engenheiro de segurança está realizando um trabalho de resposta a incidentes. O engenheiro de segurança precisa restaurar um cluster de banco de dados Amazon RDS para a última versão íntegra conhecida. O cluster de banco de dados está configurado para gerar backups automatizados com um período de retenção de 14 dias. O ataque inicial ocorreu há 5 dias, exatamente às 15h15.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Identifique o ARN do cluster regional para o banco de dados. Use o ARN para restaurar o cluster regional utilizando o recurso Restaurar para um ponto específico no tempo. Defina um horário de destino para 5 dias atrás, às 15h14."},
+    {id:"B",text:"Identifique o ARN do cluster regional do banco de dados. Liste os snapshots que foram criados no cluster. Restaure o banco de dados usando o snapshot com a data de criação mais próxima de 5 dias atrás, às 15h14."},
+    {id:"C",text:"Liste todos os snapshots que foram tirados de todos os bancos de dados RDS da empresa. Identifique o snapshot mais próximo de 5 dias atrás, às 15h14, e restaure-o."},
+    {id:"D",text:"Identifique o ARN do cluster regional para o banco de dados. Use o ARN para restaurar o cluster regional utilizando o recurso Restaurar para um ponto específico no tempo. Defina um horário de destino de 14 dias atrás."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança de uma empresa precisa projetar um plano de resposta a incidentes que lide com credenciais de contas de usuário do IAM comprometidas. A empresa utiliza uma organização no AWS Organizations e o AWS IAM Identity Center para gerenciar o acesso de usuários. A empresa utiliza uma conta de administrador delegado para implementar o AWS Security Hub. Essa conta de administrador delegado contém um registro organizacional no AWS CloudTrail que registra todos os eventos em um bucket do Amazon S3. A empresa também configurou um armazenamento de dados de eventos organizacionais que captura todos os eventos do registro. O plano de resposta a incidentes deve fornecer etapas que o engenheiro de segurança possa seguir para desabilitar imediatamente qualquer usuário comprometido assim que receber uma notificação de incidente de segurança. O plano deve impedir que o usuário seja utilizado em qualquer conta da AWS. O plano também deve coletar todas as ações da AWS que o usuário comprometido realizou em todas as contas nos últimos 7 dias.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Desative o usuário IAM comprometido na conta de gerenciamento da organização. Use o Amazon Athena para consultar os logs do CloudTrail da organização no bucket S3 em busca de ações que o usuário IAM realizou nos últimos 7 dias."},
+    {id:"B",text:"Remova todas as políticas do IAM associadas ao usuário do IAM na conta de gerenciamento da organização. Use o Security Hub para consultar os logs do CloudTrail em busca de ações executadas pelo usuário do IAM nos últimos 7 dias."},
+    {id:"C",text:"Remova todos os conjuntos de permissões atribuídos ao usuário no IAM Identity Center. Use o Amazon CloudWatch Logs Insights para consultar diretamente os logs do CloudTrail da organização no bucket do S3 em busca de ações que o usuário executou nos últimos 7 dias."},
+    {id:"D",text:"Desative o acesso do usuário no IAM Identity Center. Use o CloudTrail para consultar o repositório de dados de eventos da organização em busca de ações que o usuário realizou nos últimos 7 dias."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança está projetando controles de segurança para uma frota de instâncias do Amazon EC2 que executam cargas de trabalho sensíveis em uma VPC. O engenheiro de segurança precisa implementar uma solução para detectar e mitigar vulnerabilidades de software nas instâncias do EC2.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Analise as instâncias EC2 usando o Amazon Inspector. Aplique patches e atualizações de segurança usando o AWS Systems Manager Patch Manager."},
+    {id:"B",text:"Instale um firewall baseado em host e um software antivírus em cada instância EC2. Use o Run Command do AWS Systems Manager para atualizar o firewall e o software antivírus."},
+    {id:"C",text:"Instale o agente do Amazon CloudWatch nas instâncias do EC2. Habilite o registro detalhado. Use o Amazon EventBridge para revisar os logs de software em busca de anomalias."},
+    {id:"D",text:"Analise as instâncias EC2 usando o Amazon GuardDuty Malware Protection. Aplique patches e atualizações de segurança usando o AWS Systems Manager Patch Manager."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança usa o Amazon Macie para verificar os buckets do Amazon S3 de uma empresa em busca de dados confidenciais. A empresa possui muitos buckets do S3 e muitos objetos armazenados neles. O engenheiro de segurança precisa identificar os buckets do S3 que contêm dados confidenciais e realizar verificações adicionais nesses buckets.",
+  ask:"Qual solução atenderá a esses requisitos com a MENOR sobrecarga administrativa?",
+  options:[
+    {id:"A",text:"Configure a replicação entre regiões (CRR) do S3 nos buckets do S3 para replicar os objetos para uma segunda região da AWS. Configure o Macie na segunda região para verificar os objetos replicados diariamente."},
+    {id:"B",text:"Crie uma função AWS Lambda como destino de eventos do S3 para os buckets do S3. Configure a função Lambda para iniciar uma verificação do Macie de um objeto quando ele for carregado em um bucket do S3."},
+    {id:"C",text:"Configure a descoberta automatizada do Macie para amostrar continuamente dados dos buckets do S3. Execute varreduras completas dos buckets do S3 onde o Macie descobre dados confidenciais."},
+    {id:"D",text:"Configure as varreduras do Macie para serem executadas nos buckets do S3. Agregue os resultados das varreduras em uma tabela do Amazon DynamoDB. Use a tabela do DynamoDB para consultas."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa envia snapshots do Amazon RDS para duas contas como parte de seu plano de recuperação de desastres (DR). Os snapshots devem ser criptografados. No entanto, cada conta precisa ser capaz de descriptografar os snapshots em caso de um evento de DR.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Use a chave padrão do AWS KMS para gerar os snapshots. Crie uma função AWS Lambda que copie a chave de criptografia do KMS para as duas contas."},
+    {id:"B",text:"Utilize uma chave gerenciada pelo cliente do AWS KMS para gerar os snapshots. Crie uma função AWS Lambda que importe a chave do KMS nas duas contas."},
+    {id:"C",text:"Use a chave padrão do AWS KMS para gerar os snapshots. Compartilhe a chave do KMS com as duas contas usando uma entidade de segurança do IAM que tenha as permissões adequadas do KMS em cada conta."},
+    {id:"D",text:"Utilize uma chave gerenciada pelo cliente do AWS KMS para gerar os snapshots. Compartilhe a chave do KMS com as duas contas usando uma entidade de segurança do IAM que tenha as permissões adequadas do KMS em cada conta."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa tem a obrigação de criptografar todos os dados em trânsito, conforme exigido por lei. Recentemente, a empresa descobriu um cluster Amazon Aurora que não atende a esse requisito.",
+  ask:"Como a empresa pode impor a criptografia para todas as conexões com o cluster Aurora?",
+  options:[
+    {id:"A",text:"Na configuração do cluster Aurora, defina o parâmetro do cluster de banco de dados require_secure_transport como ON."},
+    {id:"B",text:"Utilize o AWS Directory Service para Microsoft Active Directory para criar um diretório de usuários e impor a autenticação Kerberos com o Aurora."},
+    {id:"C",text:"Configure o cluster Aurora para usar o AWS Certificate Manager (ACM) para fornecer certificados de criptografia."},
+    {id:"D",text:"Crie um proxy do Amazon RDS. Conecte o proxy ao cluster Aurora para habilitar a criptografia."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"O site público de uma empresa consiste em um Application Load Balancer (ALB), um conjunto de instâncias do Amazon EC2 que executam uma aplicação sem estado por trás do ALB e uma tabela do Amazon DynamoDB da qual a aplicação lê dados. A empresa está preocupada com varreduras maliciosas e ataques DDoS. Ela deseja impor uma restrição na qual cada endereço IP do cliente possa ler os dados apenas 3 vezes em qualquer período de 5 minutos.",
+  ask:"Qual solução atenderá a esse requisito com o MENOR esforço?",
+  options:[
+    {id:"A",text:"Configure o AWS WAF na frente do ALB. Crie uma regra que bloqueie solicitações que excedam o limite de 3 solicitações em qualquer período de 5 minutos para cada endereço IP."},
+    {id:"B",text:"Crie uma função AWS Lambda acionada pelo Amazon CloudWatch. Configure a função Lambda para contar as solicitações para cada endereço IP em intervalos contínuos de 5 minutos e para fornecer uma notificação se a contagem exceder 3."},
+    {id:"C",text:"Modifique o aplicativo EC2 para contar o endereço IP de origem das solicitações e calcular uma soma acumulada de 5 minutos. Retorne uma mensagem de erro se a soma da contagem for maior que 3."},
+    {id:"D",text:"Adicione o endereço IP de origem e o horário da solicitação à tabela do DynamoDB. Adicione uma configuração de TTL de 5 minutos com base no horário da solicitação. Altere a capacidade de leitura da taxa de transferência da tabela do DynamoDB para 3."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma sub-rede pública contém duas instâncias do Amazon EC2. A sub-rede possui uma ACL de rede personalizada. Um engenheiro de segurança está projetando uma solução para melhorar a segurança da sub-rede. A solução deve permitir o tráfego de saída para um serviço de internet que utiliza TLS pela porta 443. A solução também deve bloquear o tráfego de entrada destinado ao MySQL na porta 3306.",
+  ask:"Qual conjunto de regras da ACL de rede atende a esses requisitos?",
+  options:[
+    {id:"A",text:"Use a regra de entrada 100 para permitir o tráfego na porta TCP 443. Use a regra de entrada 200 para negar o tráfego na porta TCP 3306. Use a regra de saída 100 para permitir o tráfego na porta TCP 443."},
+    {id:"B",text:"Use a regra de entrada 100 para negar o tráfego na porta TCP 3306. Use a regra de entrada 200 para permitir o tráfego no intervalo de portas TCP 1024-65535. Use a regra de saída 100 para permitir o tráfego na porta TCP 443."},
+    {id:"C",text:"Use a regra de entrada 100 para permitir o tráfego no intervalo de portas TCP 1024-65535. Use a regra de entrada 200 para negar o tráfego na porta TCP 3306. Use a regra de saída 100 para permitir o tráfego na porta TCP 443."},
+    {id:"D",text:"Use a regra de entrada 100 para negar o tráfego na porta TCP 3306. Use a regra de entrada 200 para permitir o tráfego na porta TCP 443. Use a regra de saída 100 para permitir o tráfego na porta TCP 443."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o Amazon Elastic Container Service (Amazon ECS) para implantar um aplicativo que lida com dados sensíveis. Durante uma auditoria de segurança recente, a empresa identificou uma vulnerabilidade em que as credenciais do Amazon RDS estavam armazenadas junto com o código do aplicativo no repositório de código-fonte da empresa. Um engenheiro de segurança precisa desenvolver uma solução para garantir que as credenciais do banco de dados sejam armazenadas com segurança e rotacionadas periodicamente. As credenciais devem ser acessíveis somente ao aplicativo. O engenheiro também precisa impedir que os administradores do banco de dados compartilhem as credenciais em texto simples com outros membros da equipe. A solução também deve minimizar a sobrecarga administrativa.",
+  ask:"Qual solução atende a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize o AWS Systems Manager Parameter Store para gerar credenciais de banco de dados. Utilize um perfil do IAM para tarefas do ECS para restringir o acesso às credenciais do banco de dados apenas a contêineres específicos."},
+    {id:"B",text:"Utilize o AWS Secrets Manager para armazenar as credenciais do banco de dados. Utilize uma política inline do IAM para tarefas do ECS para restringir o acesso às credenciais do banco de dados apenas a contêineres específicos."},
+    {id:"C",text:"Utilize o AWS Systems Manager Parameter Store para armazenar as credenciais do banco de dados. Utilize funções do IAM para tarefas do ECS para restringir o acesso às credenciais do banco de dados apenas a contêineres específicos."},
+    {id:"D",text:"Utilize o AWS Secrets Manager para armazenar as credenciais do banco de dados. Utilize funções do IAM para tarefas do ECS a fim de restringir o acesso às credenciais do banco de dados apenas a contêineres específicos."}
+  ],
+  answer:["D"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma política de segurança de nuvem corporativa define que as comunicações entre a VPC da empresa e o AWS KMS devem trafegar inteiramente dentro da rede da AWS e não usar endpoints de serviços públicos.",
+  ask:"Qual combinação das seguintes ações MELHOR atende a esse requisito? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Adicione a condição aws:sourceVpce à política de chave do AWS KMS, fazendo referência ao ID do endpoint da VPC da empresa."},
+    {id:"B",text:"Remova o gateway de internet da VPC e adicione um gateway privado virtual à VPC para impedir a conectividade direta com a internet pública."},
+    {id:"C",text:"Crie um endpoint de VPC para o AWS KMS com DNS privado habilitado."},
+    {id:"D",text:"Utilize o recurso de importação de chave do KMS para transferir a chave do AWS KMS com segurança por meio de uma VPN."},
+    {id:"E",text:"Adicione a seguinte condição à política de chave do AWS KMS: \"aws:SourceIp\": \"10.0.0.0/16\"."}
+  ],
+  answer:["A","C"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança recebeu um alerta do Amazon GuardDuty indicando uma descoberta relacionada à instância do Amazon EC2 que hospeda o site principal da empresa. A descoberta do GuardDuty foi: UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration. O engenheiro de segurança confirmou que um agente malicioso utilizou chaves de acesso à API destinadas à instância do EC2 a partir de um país onde a empresa não opera. O engenheiro de segurança precisa negar o acesso ao agente malicioso.",
+  ask:"Qual é o primeiro passo que o engenheiro de segurança deve tomar?",
+  options:[
+    {id:"A",text:"Abra o console do EC2 e remova quaisquer grupos de segurança que permitam tráfego de entrada de 0.0.0.0/0."},
+    {id:"B",text:"Instale o agente do AWS Systems Manager na instância EC2 e execute um relatório de inventário."},
+    {id:"C",text:"Instale o agente Amazon Inspector no host e execute uma avaliação com o pacote de regras CVE."},
+    {id:"D",text:"Abra o console do IAM e revogue todas as sessões do IAM associadas ao perfil da instância."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa deseja armazenar todos os objetos que contêm dados sensíveis em um bucket do Amazon S3. A empresa usará criptografia do lado do servidor para criptografar o bucket do S3. A equipe de operações da empresa gerencia o acesso aos buckets do S3. A equipe de segurança da empresa gerencia o acesso às chaves de criptografia. A empresa deseja separar as responsabilidades das duas equipes para garantir que erros de configuração cometidos por apenas uma delas não comprometam os dados, concedendo acesso não autorizado a dados em texto não criptografado.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Certifique-se de que a equipe de operações configure a criptografia padrão do bucket S3 para usar criptografia do lado do servidor com chaves gerenciadas pelo Amazon S3 (SSE-S3). Certifique-se de que a equipe de segurança crie uma política do IAM que controle o acesso ao uso das chaves de criptografia."},
+    {id:"B",text:"Certifique-se de que a equipe de operações crie uma política de bucket que exija que as solicitações usem criptografia do lado do servidor com chaves do AWS KMS (SSE-KMS) gerenciadas pelo cliente. Certifique-se de que a equipe de segurança crie uma política de chaves que controle o acesso às chaves de criptografia."},
+    {id:"C",text:"Certifique-se de que a equipe de operações crie uma política de bucket que exija que as solicitações usem criptografia do lado do servidor com chaves gerenciadas do Amazon S3 (SSE-S3). Certifique-se de que a equipe de segurança crie uma política do IAM que controle o acesso às chaves de criptografia."},
+    {id:"D",text:"Garanta que a equipe de operações crie uma política de bucket que exija que as solicitações usem criptografia do lado do servidor com chaves de criptografia fornecidas pelo cliente (SSE-C). Garanta que a equipe de segurança armazene as chaves fornecidas pelo cliente no AWS KMS. Garanta que a equipe de segurança crie uma política de chaves que controle o acesso às chaves de criptografia."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa sua aplicação na AWS. A empresa possui uma configuração com múltiplos ambientes, cada um isolado em uma conta AWS separada. A empresa conta com uma organização no AWS Organizations para gerenciar essas contas. Há uma única conta de segurança dedicada para a organização. A empresa precisa criar um inventário de todos os dados sensíveis armazenados em buckets do Amazon S3 em todas as contas da organização. Os resultados devem ser visíveis em um único local.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Defina a conta de segurança como administrador delegado do Amazon Macie e do AWS Security Hub. Habilite e configure o Macie para publicar resultados de dados confidenciais no Security Hub."},
+    {id:"B",text:"Defina a conta de segurança como administrador delegado do AWS Security Hub. Em cada conta, configure o Amazon Inspector para verificar os buckets do S3 em busca de dados confidenciais. Publique as descobertas de dados confidenciais no Security Hub."},
+    {id:"C",text:"Em cada conta, configure o Amazon Inspector para verificar os buckets do S3 em busca de dados confidenciais. Habilite a integração do Amazon Inspector com o AWS Trusted Advisor. Publique as descobertas de dados confidenciais no Trusted Advisor."},
+    {id:"D",text:"Em cada conta, habilite e configure o Amazon Macie para detectar dados confidenciais. Habilite a integração do Macie com o AWS Trusted Advisor. Publique as descobertas sobre dados confidenciais no Trusted Advisor."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa possui centenas de contas da AWS em uma organização no AWS Organizations. A empresa opera em uma única região da AWS. A empresa possui uma conta dedicada a ferramentas de segurança na organização. Essa conta está configurada como administrador delegado da organização para o Amazon GuardDuty e o AWS Security Hub. A empresa configurou o ambiente para habilitar automaticamente o GuardDuty e o Security Hub para contas da AWS existentes e novas. A empresa está realizando testes de controle em descobertas específicas do GuardDuty. A equipe de segurança iniciou uma instância do Amazon EC2 e tentou executar solicitações de DNS em um domínio de teste, example.com, para gerar uma descoberta de DNS. No entanto, a descoberta do GuardDuty nunca foi criada na conta de administrador delegado do Security Hub.",
+  ask:"Por que a descoberta não foi criada na conta de administrador delegado do Security Hub?",
+  options:[
+    {id:"A",text:"Os logs de fluxo da VPC não estavam ativados para a VPC onde a instância EC2 foi iniciada."},
+    {id:"B",text:"A VPC onde a instância EC2 foi iniciada tinha a opção DHCP configurada para um resolvedor OpenDNS personalizado."},
+    {id:"C",text:"A integração do GuardDuty com o Security Hub nunca foi ativada na conta da AWS onde a descoberta foi gerada."},
+    {id:"D",text:"A agregação entre regiões no Security Hub não foi configurada."}
+  ],
+  answer:["B"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Um engenheiro de segurança descobre que as senhas dos usuários de uma empresa não possuem um comprimento mínimo obrigatório. A empresa utiliza os seguintes dois provedores de identidade (IdPs): AWS Identity and Access Management (IAM) federado com o Active Directory local; e pools de usuários do Amazon Cognito que contêm o banco de dados de usuários para um aplicativo na nuvem AWS desenvolvido pela empresa.",
+  ask:"Qual combinação de ações o engenheiro de segurança deve tomar para implementar um comprimento mínimo obrigatório para as senhas? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Atualize a política de comprimento de senha na configuração do IAM."},
+    {id:"B",text:"Atualize a política de comprimento de senha na configuração do Cognito."},
+    {id:"C",text:"Atualize a política de comprimento de senha na configuração do Active Directory local."},
+    {id:"D",text:"Crie um SCP no AWS Organizations. Configure o SCP para impor um comprimento mínimo de senha para o IAM e o Cognito."},
+    {id:"E",text:"Crie uma política do IAM que inclua uma condição para o comprimento mínimo da senha. Aplique a política ao IAM e ao Cognito."}
+  ],
+  answer:["B","C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa possui um aplicativo web que roda por trás de um Application Load Balancer (ALB). O aplicativo está sofrendo um ataque de preenchimento de credenciais que resulta em muitas tentativas de login malsucedidas. O ataque está vindo de vários endereços IP. As tentativas de login estão usando a string do agente do usuário de um emulador de dispositivo móvel conhecido. Um engenheiro de segurança precisa implementar uma solução para mitigar o ataque. A solução deve permitir logins legítimos no aplicativo.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Crie um alarme do Amazon CloudWatch que reaja a tentativas de login que contenham a string do agente do usuário especificada. Adicione um tópico do Amazon SNS ao alarme."},
+    {id:"B",text:"Modifique o grupo de segurança de entrada no ALB para negar o tráfego dos endereços IP envolvidos no ataque."},
+    {id:"C",text:"Crie uma ACL da Web do AWS WAF para o ALB. Crie uma regra personalizada que bloqueie solicitações que contenham a string do agente do usuário do emulador de dispositivo."},
+    {id:"D",text:"Crie uma ACL da Web do AWS WAF para o ALB. Crie uma regra personalizada que permita solicitações de strings de agente de usuário legítimas."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa opera uma plataforma de software de código aberto exposta à internet. Essa plataforma legada não recebe mais atualizações de segurança. Ela utiliza o balanceamento de carga ponderado do Amazon Route 53 para enviar tráfego para duas instâncias do Amazon EC2, que se conectam a um cluster do Amazon RDS. Um relatório recente sugere que essa plataforma é vulnerável a ataques de injeção de SQL, com exemplos de ataques fornecidos. O engenheiro de segurança da empresa precisa proteger o sistema contra ataques de injeção de SQL em 24 horas. A solução deve exigir o mínimo de esforço possível e manter as operações normais durante a implementação.",
+  ask:"O que o engenheiro de segurança deve fazer para atender a esses requisitos?",
+  options:[
+    {id:"A",text:"Crie um Application Load Balancer (ALB) com as instâncias EC2 existentes como grupo de destino. Crie uma ACL da Web do AWS WAF contendo regras que protejam o aplicativo contra esse ataque e aplique-a ao ALB. Teste para garantir que a vulnerabilidade foi mitigada e, em seguida, redirecione os registros do Route 53 para apontar para o ALB. Atualize os grupos de segurança nas instâncias EC2 para impedir o acesso direto da internet."},
+    {id:"B",text:"Crie uma distribuição do Amazon CloudFront especificando uma instância EC2 como origem. Crie uma ACL da Web do AWS WAF contendo regras que protejam o aplicativo contra esse ataque e aplique-a à distribuição. Teste para garantir que a vulnerabilidade foi mitigada e, em seguida, redirecione os registros do Route 53 para apontar para o CloudFront."},
+    {id:"C",text:"Obtenha o código-fonte mais recente da plataforma e faça as atualizações necessárias. Teste o código atualizado para garantir que a vulnerabilidade tenha sido mitigada e, em seguida, implante a versão corrigida da plataforma nas instâncias EC2."},
+    {id:"D",text:"Atualize o grupo de segurança associado às instâncias EC2, removendo o acesso da internet à porta TCP usada pelo banco de dados SQL. Crie uma ACL da Web do AWS WAF contendo regras que protejam o aplicativo contra esse ataque e aplique-a às instâncias EC2. Teste para garantir que a vulnerabilidade foi mitigada e, em seguida, restaure o grupo de segurança para a configuração original."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança recentemente rotacionou as chaves de host de uma instância do Amazon EC2. Ele está tentando acessar a instância usando o recurso EC2 Instance Connect, mas recebe um erro de validação da chave de host. Antes da rotação, o EC2 Instance Connect funcionava corretamente com essa instância.",
+  ask:"O que o engenheiro de segurança deve fazer para resolver esse erro?",
+  options:[
+    {id:"A",text:"Importe o material de chave para o AWS Key Management Service (AWS KMS)."},
+    {id:"B",text:"Carregue manualmente a nova chave de host no banco de dados de chaves de host confiáveis da AWS."},
+    {id:"C",text:"Certifique-se de que a política AmazonSSMManagedInstanceCore esteja anexada ao perfil da instância EC2."},
+    {id:"D",text:"Crie um novo par de chaves SSH para a instância EC2."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança precisa implementar uma solução para identificar quaisquer dados confidenciais armazenados em um bucket do Amazon S3. A solução deve gerar relatórios sobre os dados confidenciais no bucket do S3 utilizando um tópico existente do Amazon Simple Notification Service (Amazon SNS).",
+  ask:"Qual solução atenderá a esses requisitos com o MENOR esforço de implementação?",
+  options:[
+    {id:"A",text:"Habilite o AWS Config. Configure o AWS Config para monitorar dados confidenciais no bucket do S3 e enviar notificações para o tópico do SNS."},
+    {id:"B",text:"Crie uma função AWS Lambda para verificar o bucket S3 em busca de dados confidenciais que correspondam a um padrão. Programe a função Lambda para enviar notificações ao tópico do SNS."},
+    {id:"C",text:"Configure o Amazon Macie para usar identificadores de dados gerenciados para identificar e categorizar dados confidenciais. Crie uma regra do Amazon EventBridge para enviar notificações ao tópico do SNS."},
+    {id:"D",text:"Habilite o Amazon GuardDuty. Configure os eventos de dados do AWS CloudTrail S3. Crie um alarme do Amazon CloudWatch que reaja às descobertas do GuardDuty e envie notificações para o tópico do SNS."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa possui uma plataforma dividida em 12 contas da AWS, pertencentes à mesma organização no AWS Organizations. Muitas dessas contas utilizam o Amazon API Gateway para expor APIs aos aplicativos de front-end da empresa. A empresa precisa proteger as APIs existentes e quaisquer recursos que serão implantados no futuro contra ataques comuns de injeção de SQL e bots.",
+  ask:"Qual solução atenderá a esses requisitos com a MENOR sobrecarga operacional?",
+  options:[
+    {id:"A",text:"Crie uma ACL da Web do AWS WAF para cada API. Inclua regras gerenciadas para bloquear injeção de SQL e ataques de bots. Use o AWS Config para detectar novos recursos que não possuem uma ACL da Web. Configure uma ação de correção para provisionar uma ACL da Web para esses recursos."},
+    {id:"B",text:"Use o AWS Firewall Manager para criar uma política do AWS WAF. Configure a política para incluir os grupos de regras gerenciadas do AWS Bot Control e do banco de dados SQL. Defina o escopo da política para incluir o estágio do API Gateway como o tipo de recurso."},
+    {id:"C",text:"Crie um produto do AWS Service Catalog para uma ACL da Web do AWS WAF que inclua regras para bloquear ataques de injeção de SQL e bots. Use o AWS Config para detectar novos recursos que não tenham esse produto aplicado. Configure uma ação de correção para provisionar uma ACL da Web para esses recursos."},
+    {id:"D",text:"Utilize o AWS Security Hub para detectar recursos desprotegidos e enviar as descobertas como eventos de ação personalizados para o Amazon EventBridge. Crie uma função AWS Lambda para esses eventos, a fim de provisionar uma ACL da Web do AWS WAF para os recursos desprotegidos. Inclua regras gerenciadas para bloquear ataques de injeção de SQL e bots."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa está implementando um novo aplicativo em uma nova conta da AWS. Uma VPC e sub-redes foram criadas para o aplicativo. O aplicativo foi emparelhado com uma VPC existente em outra conta na mesma região da AWS para acesso ao banco de dados. Instâncias do Amazon EC2 serão criadas e encerradas regularmente na VPC do aplicativo, mas apenas algumas delas precisarão acessar os bancos de dados na VPC emparelhada pela porta TCP 1521. Um engenheiro de segurança deve garantir que apenas as instâncias do EC2 que precisam acessar os bancos de dados possam acessá-los pela rede.",
+  ask:"Como o engenheiro de segurança pode implementar essa solução?",
+  options:[
+    {id:"A",text:"Crie um novo grupo de segurança na VPC do banco de dados e uma regra de entrada que permita todo o tráfego do intervalo de endereços IP da VPC da aplicação. Adicione uma nova regra de ACL de rede nas sub-redes do banco de dados. Configure a regra para a porta TCP 1521 a partir do intervalo de endereços IP da VPC da aplicação. Anexe o novo grupo de segurança às instâncias de banco de dados que as instâncias da aplicação precisam acessar."},
+    {id:"B",text:"Crie um novo grupo de segurança na VPC do aplicativo com uma regra de entrada que permita o intervalo de endereços IP da VPC do banco de dados pela porta TCP 1521. Anexe o novo grupo de segurança às instâncias do banco de dados e às instâncias do aplicativo que precisam de acesso ao banco de dados."},
+    {id:"C",text:"Crie um novo grupo de segurança na VPC da aplicação sem regras de entrada. Crie um novo grupo de segurança na VPC do banco de dados com uma regra de entrada que permita a porta TCP 1521 a partir do novo grupo de segurança da aplicação na VPC da aplicação. Anexe o grupo de segurança da aplicação às instâncias da aplicação que precisam de acesso ao banco de dados e anexe o grupo de segurança do banco de dados às instâncias do banco de dados."},
+    {id:"D",text:"Crie um novo grupo de segurança na VPC da aplicação com uma regra de entrada que permita o intervalo de endereços IP da VPC do banco de dados pela porta TCP 1521. Adicione uma nova regra de ACL de rede nas sub-redes do banco de dados. Configure a regra para permitir todo o tráfego do intervalo de endereços IP da VPC da aplicação. Anexe o novo grupo de segurança às instâncias da aplicação que precisam de acesso ao banco de dados."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa possui várias contas na Nuvem AWS. Os usuários da conta de desenvolvedor precisam ter acesso a recursos específicos na conta de produção.",
+  ask:"Qual é a maneira MAIS segura de fornecer esse acesso?",
+  options:[
+    {id:"A",text:"Crie um usuário IAM na conta de produção. Conceda as permissões apropriadas aos recursos necessários. Compartilhe a senha apenas com os usuários que precisam de acesso."},
+    {id:"B",text:"Crie acesso entre contas com uma função do IAM na conta de desenvolvedor. Conceda as permissões apropriadas a essa função. Permita que os usuários da conta de desenvolvedor assumam essa função para acessar os recursos de produção."},
+    {id:"C",text:"Crie acesso entre contas com uma conta de usuário IAM na conta de produção. Conceda as permissões apropriadas a essa conta de usuário. Permita que os usuários da conta de desenvolvedor usem essa conta de usuário para acessar os recursos de produção."},
+    {id:"D",text:"Crie acesso entre contas com uma função do IAM na conta de produção. Conceda as permissões apropriadas a essa função. Permita que os usuários da conta de desenvolvedor assumam essa função para acessar os recursos de produção."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa de saúde possui mais de 1 milhão de registros de pacientes em um bucket do Amazon S3. Os registros incluem informações de identificação pessoal (PII). O bucket do S3 contém centenas de terabytes de dados. Um engenheiro de segurança recebe um alerta acionado por uma descoberta de Exfiltration:S3/AnomalousBehavior do Amazon GuardDuty. O engenheiro confirma que um invasor está usando credenciais temporárias obtidas de uma instância do Amazon EC2 comprometida, que possui permissões s3:GetObject para o bucket do S3. O invasor começou a baixar o conteúdo do bucket. O engenheiro contata a equipe de desenvolvimento, que precisará de 4 horas para implementar e implantar uma correção. O engenheiro precisa agir imediatamente para impedir que o invasor baixe mais dados do bucket do S3.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Revogar a sessão temporária associada ao perfil de instância anexado à instância EC2."},
+    {id:"B",text:"Coloque a instância EC2 em quarentena, substituindo o grupo de segurança existente por um novo grupo de segurança sem regras aplicadas."},
+    {id:"C",text:"Habilite o Amazon Macie no bucket do S3. Configure os identificadores de dados gerenciados para informações de identificação pessoal (PII). Habilite o Bloqueio de Objetos do S3 em objetos sinalizados pelo Macie."},
+    {id:"D",text:"Aplique temporariamente uma política de bucket S3. Configure a política para negar o acesso de leitura a todas as entidades, bloqueando os downloads enquanto a equipe de desenvolvimento trabalha para corrigir a vulnerabilidade."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa está investigando um aumento em sua fatura mensal da AWS. A empresa descobre que agentes maliciosos comprometeram algumas instâncias do Amazon EC2 e veicularam páginas da web para uma grande campanha de phishing por e-mail. Um engenheiro de segurança precisa implementar uma solução para monitorar futuros aumentos de custos e, assim, detectar atividades maliciosas.",
+  ask:"Qual solução oferecerá à empresa a detecção MAIS PRECOCE de aumentos de custos?",
+  options:[
+    {id:"A",text:"Crie uma regra no Amazon EventBridge que invoque uma função AWS Lambda a cada hora. Programe a função Lambda para baixar um relatório de uso da AWS do AWS Data Exports sobre o uso de todos os serviços. Programe a função Lambda para analisar o relatório e enviar uma notificação quando anomalias forem detectadas."},
+    {id:"B",text:"Crie um monitor de custos no AWS Cost Anomaly Detection. Configure um alerta individual para notificar um tópico do Amazon SNS quando a porcentagem acima do custo esperado exceder um limite."},
+    {id:"C",text:"Analise diariamente o AWS Cost Explorer para detectar anomalias nos custos em relação aos meses anteriores. Analise o uso de quaisquer serviços que apresentem um aumento significativo de custo em comparação com os meses anteriores."},
+    {id:"D",text:"Capture os logs de fluxo da VPC onde as instâncias EC2 estão em execução. Utilize uma ferramenta de análise de rede de terceiros para analisar os logs de fluxo e detectar anomalias no tráfego de rede que possam aumentar os custos."}
+  ],
+  answer:["B"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma empresa utiliza o Amazon API Gateway para apresentar APIs REST aos usuários. Um desenvolvedor de API deseja analisar os padrões de acesso à API sem a necessidade de analisar os arquivos de log.",
+  ask:"Qual combinação de etapas atenderá a esses requisitos com o MENOR esforço? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Configure o registro de acesso para o estágio da API necessário."},
+    {id:"B",text:"Configure um destino de trilha do AWS CloudTrail para eventos do API Gateway. Configure filtros nos campos userIdentity, userAgent e sourceIPAddress."},
+    {id:"C",text:"Configure um destino no Amazon S3 para os logs do API Gateway. Execute consultas no Amazon Athena para analisar as informações de acesso à API."},
+    {id:"D",text:"Utilize o Amazon CloudWatch Logs Insights para analisar informações de acesso à API."},
+    {id:"E",text:"Selecione a opção Ativar métricas detalhadas do CloudWatch no estágio da API desejado."}
+  ],
+  answer:["A","D"]
+},
+{
+  type:"single",
+  stem:"Uma startup utiliza uma única conta da AWS com recursos em uma única região. Um engenheiro de segurança configura uma trilha do AWS CloudTrail na mesma região para enviar arquivos de log para um bucket do Amazon S3 usando a AWS CLI. Devido à expansão, a empresa adiciona recursos em várias regiões. O engenheiro de segurança percebe que os logs das novas regiões não estão chegando ao bucket do S3.",
+  ask:"O que o engenheiro de segurança deve fazer para corrigir esse problema com o mínimo de sobrecarga operacional?",
+  options:[
+    {id:"A",text:"Crie uma nova trilha do CloudTrail. Selecione as novas regiões onde a empresa adicionou recursos."},
+    {id:"B",text:"Altere o bucket S3 para receber notificações e acompanhar todas as ações de todas as regiões."},
+    {id:"C",text:"Crie uma nova trilha do CloudTrail que se aplique a todas as regiões."},
+    {id:"D",text:"Altere a trilha do CloudTrail existente para que se aplique a todas as regiões."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma equipe de segurança gerencia as chaves gerenciadas pelo cliente do AWS KMS de uma empresa. Somente membros da equipe de segurança podem administrar as chaves do KMS. A equipe de desenvolvimento de aplicações da empresa possui um processo de software que ocasionalmente precisa de acesso temporário às chaves. A equipe de segurança precisa fornecer acesso às chaves para o processo de software da equipe de desenvolvimento.",
+  ask:"Qual solução atenderá a esses requisitos com a MENOR sobrecarga operacional?",
+  options:[
+    {id:"A",text:"Exporte o material da chave KMS para um módulo de segurança de hardware (HSM) local. Conceda acesso ao material da chave à equipe de desenvolvimento do aplicativo."},
+    {id:"B",text:"Edite a política de chave que concede à equipe de segurança acesso às chaves KMS, adicionando a equipe de aplicativos como entidades de segurança. Reverta essa alteração quando a equipe de aplicativos não precisar mais do acesso."},
+    {id:"C",text:"Crie uma concessão de chave (grant) para permitir que a equipe de desenvolvimento do aplicativo use as chaves KMS. Revogue a concessão quando a equipe de desenvolvimento do aplicativo não precisar mais do acesso."},
+    {id:"D",text:"Crie uma nova chave KMS gerando material de chave localmente. Importe o material de chave para o AWS KMS sempre que a equipe de aplicação precisar de acesso. Conceda permissões à equipe de aplicação para usar a chave."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa está executando uma nova carga de trabalho em várias contas pertencentes a uma organização no AWS Organizations. Todos os recursos em execução devem ter a tag CostCenter, e essa tag deve ter um dos três valores aprovados. A empresa precisa aplicar essa política e impedir qualquer alteração da tag CostCenter para um valor não aprovado.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Crie uma regra de política personalizada no AWS Config usando o AWS CloudFormation Guard. Inclua a chave de tag CostCenter e os valores aprovados. Crie um SCP que negue a criação de recursos quando o valor da chave de condição aws:RequestTag/CostCenter não for um dos três valores aprovados."},
+    {id:"B",text:"Crie uma trilha no AWS CloudTrail. Crie uma regra no Amazon EventBridge que inclua uma declaração de regra que corresponda à criação de novos recursos. Configure a regra do EventBridge para invocar uma função AWS Lambda que verifique a tag CostCenter. Programe a função Lambda para bloquear a criação caso o valor não esteja em conformidade."},
+    {id:"C",text:"Habilite as políticas de tags para a organização. Crie uma política de tags que especifique uma chave de tag CostCenter e os valores aprovados. Configure a política para impor operações não conformes. Crie um SCP que negue a criação de recursos quando a chave de condição aws:RequestTag/CostCenter tiver um valor nulo."},
+    {id:"D",text:"Habilite as políticas de tags para a organização. Crie uma política de tags que especifique uma chave de tag como CostCenter e os valores aprovados. Crie uma regra do Amazon EventBridge que invoque uma função AWS Lambda quando uma tag não compatível for criada. Programe a função Lambda para bloquear alterações na tag."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Organizations. A empresa descobriu que utiliza um módulo de segurança de hardware (HSM) AWS CloudHSM hospedado em uma conta AWS central. Uma das equipes cria sua própria conta AWS dedicada e deseja utilizar o HSM hospedado na conta central.",
+  ask:"Como um engenheiro de segurança deve compartilhar o HSM hospedado na conta central com a nova conta dedicada?",
+  options:[
+    {id:"A",text:"Utilize o AWS Resource Access Manager (AWS RAM) para compartilhar o ID da sub-rede da VPC do HSM hospedado na conta central com a nova conta dedicada. Configure o grupo de segurança do CloudHSM para aceitar tráfego de entrada dos endereços IP privados das instâncias de cliente na nova conta dedicada."},
+    {id:"B",text:"Use o AWS Identity and Access Management (IAM) para criar uma função entre contas para acessar o cluster CloudHSM que está na conta central. Crie um novo usuário do IAM na nova conta dedicada. Atribua a função entre contas ao novo usuário do IAM."},
+    {id:"C",text:"Use o AWS IAM Identity Center para criar um token do AWS Security Token Service (AWS STS) para autenticar a partir da nova conta dedicada na conta central. Use as permissões entre contas atribuídas ao token STS para invocar uma operação no HSM da conta central."},
+    {id:"D",text:"Utilize o AWS Resource Access Manager (AWS RAM) para compartilhar o ID do HSM hospedado na conta central com a nova conta dedicada. Configure o grupo de segurança do CloudHSM para aceitar tráfego de entrada dos endereços IP privados das instâncias de cliente na nova conta dedicada."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza regras do AWS Config para identificar buckets do Amazon S3 que não estão em conformidade com a política de proteção de dados da empresa. Os buckets do S3 estão hospedados em diversas regiões da AWS e em várias contas da AWS. As contas pertencem a uma organização no AWS Organizations. A empresa precisa de uma solução para corrigir os buckets do S3 existentes que não estão em conformidade, bem como quaisquer buckets do S3 não conformes que sejam criados no futuro.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Implante um agregador do AWS Config com agregação de dados de recursos em toda a organização. Crie uma função AWS Lambda que responda às descobertas do AWS Config sobre buckets S3 não compatíveis, excluindo ou reconfigurando esses buckets."},
+    {id:"B",text:"Implante um agregador do AWS Config com agregação de dados de recursos em toda a organização. Crie um SCP que contenha uma instrução Deny para impedir a criação de novos buckets S3 não compatíveis. Aplique o SCP a todas as UOs da organização."},
+    {id:"C",text:"Implante um agregador do AWS Config que abranja apenas as contas e regiões que a empresa usa atualmente. Crie uma função AWS Lambda que responda às descobertas do AWS Config sobre buckets S3 não compatíveis, excluindo ou reconfigurando esses buckets."},
+    {id:"D",text:"Implante um agregador do AWS Config que limite o escopo apenas às contas e regiões que a empresa utiliza atualmente. Crie um SCP que contenha uma instrução de negação (Deny) para impedir a criação de novos buckets S3 não compatíveis. Aplique o SCP a todas as UOs da organização."}
+  ],
+  answer:["A"]
+},
+{
+  type:"multi",
+  pick:3,
+  stem:"Uma empresa contratou uma empresa terceirizada para auditar diversas contas da AWS. Para viabilizar a auditoria, funções IAM entre contas foram criadas em cada conta alvo da auditoria. O auditor está com dificuldades para acessar algumas das contas.",
+  ask:"Quais das seguintes opções podem estar causando esse problema? (Escolha três.)",
+  options:[
+    {id:"A",text:"O ID externo usado pelo auditor está ausente ou incorreto."},
+    {id:"B",text:"O auditor está usando a senha incorreta."},
+    {id:"C",text:"O auditor não recebeu a permissão sts:AssumeRole para a função na conta de destino."},
+    {id:"D",text:"A função do Amazon EC2 usada pelo auditor deve ser definida como a função da conta de destino."},
+    {id:"E",text:"A chave secreta utilizada pelo auditor está ausente ou incorreta."},
+    {id:"F",text:"O ARN da função usado pelo auditor está ausente ou incorreto."}
+  ],
+  answer:["A","C","F"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Organizations para gerenciar suas contas da AWS. A empresa possui uma conta de desenvolvimento e uma conta de produção. Um auditor solicitou evidências de que as cargas de trabalho da conta de produção são resilientes a interrupções. A empresa precisa de uma solução que melhore a resiliência de cada carga de trabalho da conta de produção.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize o AWS Audit Manager para criar uma nova avaliação com base nas Melhores Práticas Operacionais da AWS na conta de produção. Após a conclusão das avaliações, forneça ao auditor acesso direto aos relatórios."},
+    {id:"B",text:"Analise a arquitetura utilizando a ferramenta AWS Well-Architected. Utilize o Well-Architected Framework e concentre-se nos pilares de Excelência Operacional, Segurança e Confiabilidade. Documente e implemente medidas de mitigação para os riscos identificados. Forneça a documentação ao auditor."},
+    {id:"C",text:"Utilize o Amazon Inspector em um ambiente com múltiplas contas para avaliar as cargas de trabalho da conta de produção em busca de vulnerabilidades. Crie uma varredura CIS no Amazon Inspector. Configure a varredura CIS como uma varredura única com o Nível de Benchmark 2. Após a conclusão da varredura, baixe o relatório em PDF e forneça-o ao auditor."},
+    {id:"D",text:"Utilize o AWS Fault Injection Service para criar experimentos na conta de desenvolvimento para cada carga de trabalho. Ajuste a configuração e a arquitetura das cargas de trabalho para melhorar a resiliência. Execute os experimentos novamente. Baixe os relatórios em PDF e forneça-os ao auditor."}
+  ],
+  answer:["B"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma empresa está migrando um de seus sistemas legados de um data center local para a AWS. O servidor de aplicativos será executado na AWS, mas o banco de dados deve permanecer no data center local por motivos de conformidade. O banco de dados é sensível à latência da rede. Além disso, os dados que trafegam entre o data center local e a AWS devem ter criptografia IPsec.",
+  ask:"Qual combinação de soluções da AWS atenderá a esses requisitos? (Escolha duas.)",
+  options:[
+    {id:"A",text:"AWS Site-to-Site VPN"},
+    {id:"B",text:"AWS Direct Connect"},
+    {id:"C",text:"AWS VPN CloudHub"},
+    {id:"D",text:"Emparelhamento de VPC (VPC peering)"},
+    {id:"E",text:"Gateway NAT"}
+  ],
+  answer:["A","B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa habilitou o AWS Config para sua organização no AWS Organizations. A empresa implantou centenas de buckets do Amazon S3 em toda a organização. Um engenheiro de segurança precisa identificar quaisquer buckets do S3 que não estejam criptografados com o AWS Key Management Service (AWS KMS). O engenheiro de segurança também deve impedir que objetos não criptografados com o AWS KMS sejam carregados nos buckets do S3.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize a regra gerenciada do AWS Config s3-default-encryption-kms para identificar buckets S3 não criptografados. Crie um SCP para permitir a ação s3:PutObject somente quando o objeto estiver criptografado com o AWS KMS."},
+    {id:"B",text:"Utilize a regra gerenciada do AWS Config s3-default-encryption-kms para identificar buckets S3 não criptografados. Crie políticas para cada bucket S3 para negar a ação s3:PutObject somente quando o objeto tiver criptografia do lado do servidor com chaves gerenciadas do S3 (SSE-S3)."},
+    {id:"C",text:"Use a regra gerenciada do AWS Config s3-bucket-ssl-requests-only para identificar buckets S3 não criptografados. Crie um SCP para permitir a ação s3:PutObject somente quando o objeto estiver criptografado com o AWS KMS."},
+    {id:"D",text:"Use a regra gerenciada do AWS Config s3-bucket-ssl-requests-only para identificar buckets S3 não criptografados. Crie políticas para cada bucket S3 para permitir a ação s3:PutObject somente quando o objeto estiver criptografado com o AWS KMS."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa um aplicativo em uma frota de instâncias do Amazon EC2. A empresa pode remover instâncias da frota sem risco para o aplicativo. Todas as instâncias do EC2 usam o mesmo grupo de segurança chamado ProdFleet. O Amazon GuardDuty e o AWS Config estão ativos na conta AWS da empresa. Um engenheiro de segurança precisa fornecer uma solução que impeça uma instância do EC2 de enviar tráfego de saída se o GuardDuty gerar um evento de detecção de criptomoeda. O engenheiro de segurança cria um novo grupo de segurança chamado isolate que não contém regras de saída. O engenheiro de segurança configura uma função AWS Lambda para remover uma instância do EC2 do grupo de segurança ProdFleet e adicioná-la ao grupo de segurança isolate.",
+  ask:"Qual etapa adicional atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Configure o GuardDuty para invocar diretamente a função Lambda se o GuardDuty gerar um evento de descoberta CryptoCurrency:EC2/*."},
+    {id:"B",text:"Configure uma regra do AWS Config que invoque a função Lambda se ocorrer um evento de alteração de configuração CryptoCurrency:EC2/* para uma instância EC2."},
+    {id:"C",text:"Configure uma regra do Amazon EventBridge que invoque a função Lambda se o GuardDuty gerar um evento de descoberta CryptoCurrency:EC2/*."},
+    {id:"D",text:"Configure uma regra do Amazon EventBridge que invoque a função Lambda se o AWS Config detectar um evento de alteração de configuração CryptoCurrency:EC2/* para uma instância EC2."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza instâncias do Amazon EC2 para hospedar serviços de front-end por trás de um Application Load Balancer. Volumes do Amazon Elastic Block Store (Amazon EBS) estão associados às instâncias do EC2. A empresa utiliza buckets do Amazon S3 para armazenar arquivos grandes, como imagens e músicas. A empresa implementou uma arquitetura de segurança na AWS para prevenir, identificar e isolar potenciais ataques de ransomware. Agora, a empresa deseja reduzir ainda mais o risco. Um engenheiro de segurança deve desenvolver uma solução de recuperação de desastres que possa restaurar as operações normais caso um invasor burle os controles preventivos e de detecção. A solução deve atender a um RPO de 1 hora.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize o AWS Backup para criar backups das instâncias EC2 e dos buckets S3 a cada hora. Crie modelos do AWS CloudFormation que repliquem os componentes de arquitetura existentes. Utilize um repositório de código para armazenar os modelos do CloudFormation juntamente com o código de configuração do aplicativo."},
+    {id:"B",text:"Utilize o AWS Backup para criar backups diários dos volumes EBS e objetos S3. Utilize o Amazon Security Lake para criar um data lake centralizado para os logs do AWS CloudTrail e os logs de fluxo da VPC. Utilize os logs para respostas automatizadas."},
+    {id:"C",text:"Utilize o Amazon Security Lake para criar um data lake centralizado para logs do AWS CloudTrail e logs de fluxo da VPC. Utilize os logs para respostas automatizadas. Habilite o AWS Security Hub para estabelecer um local único para procedimentos de recuperação. Crie modelos do AWS CloudFormation que repliquem os componentes de arquitetura existentes."},
+    {id:"D",text:"Crie snapshots do EBS a cada 4 horas. Habilite a proteção contra malware do Amazon GuardDuty. Crie uma automação para restaurar imediatamente o snapshot mais recente de qualquer instância EC2 que apresente uma descoberta Execution:EC2/MaliciousFile no GuardDuty."}
+  ],
+  answer:["A"]
+},
+{
+  type:"multi",
+  pick:3,
+  stem:"Uma empresa usa o AWS IAM Identity Center para gerenciar o acesso às suas contas da AWS. As contas estão em uma organização no AWS Organizations. Um engenheiro de segurança precisa configurar a administração delegada do IAM Identity Center na conta de gerenciamento da organização.",
+  ask:"Qual combinação de etapas o engenheiro de segurança deve executar no IAM Identity Center antes de configurar a administração delegada? (Escolha três.)",
+  options:[
+    {id:"A",text:"Conceda acesso com privilégios mínimos à conta de gerenciamento da organização."},
+    {id:"B",text:"Crie um novo diretório do IAM Identity Center na conta de gerenciamento da organização."},
+    {id:"C",text:"Configure uma segunda região da AWS na conta de gerenciamento da organização."},
+    {id:"D",text:"Crie conjuntos de permissões para uso exclusivo na conta de gerenciamento da organização."},
+    {id:"E",text:"Crie usuários do IAM para uso exclusivo na conta de gerenciamento da organização."},
+    {id:"F",text:"Crie atribuições de usuário somente na conta de gerenciamento da organização."}
+  ],
+  answer:["A","D","F"]
+},
+{
+  type:"multi",
+  pick:3,
+  stem:"Uma empresa descobre que uma de suas instâncias do Amazon EC2 repentinamente apresenta alto uso de CPU. A empresa não sabe se a instância do EC2 foi comprometida ou se o sistema operacional está realizando alguma limpeza em segundo plano.",
+  ask:"Qual combinação de etapas um engenheiro de segurança deve seguir antes de investigar o problema? (Escolha três.)",
+  options:[
+    {id:"A",text:"Desative a proteção contra encerramento da instância EC2, caso ela ainda não esteja desativada."},
+    {id:"B",text:"Ative a proteção contra encerramento para a instância EC2, caso ela ainda não esteja ativada."},
+    {id:"C",text:"Faça snapshots dos volumes de dados do Amazon EBS que estão anexados à instância EC2."},
+    {id:"D",text:"Remova todos os snapshots dos volumes de dados do Amazon EBS que estão anexados à instância EC2."},
+    {id:"E",text:"Capture os metadados da instância EC2 e, em seguida, marque a instância EC2 como em quarentena."},
+    {id:"F",text:"Remova imediatamente quaisquer entradas nos metadados da instância EC2 que contenham informações confidenciais."}
+  ],
+  answer:["B","C","E"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança de uma empresa está projetando um procedimento de isolamento para instâncias do Amazon EC2 como parte de um plano de resposta a incidentes. O engenheiro precisa isolar uma instância específica para bloquear todo o tráfego de entrada e saída, exceto o tráfego da equipe forense da empresa. Cada instância do EC2 possui seu próprio grupo de segurança dedicado. As instâncias do EC2 estão implantadas em sub-redes de uma VPC. Uma sub-rede pode conter várias instâncias. O engenheiro está testando o procedimento de isolamento e abre uma sessão SSH para a instância alvo. O procedimento simula o acesso de um invasor à instância alvo. O engenheiro remove as regras de grupo de segurança existentes e adiciona novas regras para conceder à equipe forense acesso à instância alvo na porta 22. Após essas alterações, o engenheiro percebe que a conexão SSH permanece ativa e utilizável. Ao executar um comando ping para o endereço IP público da instância alvo, o comando é bloqueado.",
+  ask:"O que o engenheiro deve fazer para isolar a instância alvo?",
+  options:[
+    {id:"A",text:"Adicione uma regra de entrada ao grupo de segurança para permitir o tráfego de 0.0.0.0/0 para todas as portas. Adicione uma regra de saída ao grupo de segurança para permitir o tráfego para 0.0.0.0/0 para todas as portas. Em seguida, exclua essas regras imediatamente."},
+    {id:"B",text:"Remova a regra do grupo de segurança da porta 22. Anexe uma política de função de instância que permita conexões do AWS Systems Manager Session Manager para que a equipe forense possa acessar a instância de destino."},
+    {id:"C",text:"Crie uma ACL de rede associada à sub-rede da instância de destino. Adicione uma regra no início do conjunto de regras de entrada para negar todo o tráfego de 0.0.0.0/0. Adicione uma regra no início do conjunto de regras de saída para negar todo o tráfego para 0.0.0.0/0."},
+    {id:"D",text:"Crie um documento do AWS Systems Manager que adicione uma regra de firewall em nível de host para bloquear todo o tráfego de entrada e saída. Execute o documento na instância de destino."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa que utiliza o AWS Organizations usa o AWS IAM Identity Center para administrar o acesso às contas da AWS. Um engenheiro de segurança está criando um conjunto de permissões personalizado no IAM Identity Center. A empresa usará esse conjunto de permissões em várias contas. Uma política gerenciada pela AWS e uma política gerenciada pelo cliente estão associadas ao conjunto de permissões. O engenheiro de segurança possui permissões administrativas completas e está operando na conta de gerenciamento. Quando o engenheiro de segurança tenta atribuir o conjunto de permissões a um usuário do IAM Identity Center que tem acesso a várias contas, a atribuição falha.",
+  ask:"O que o engenheiro de segurança deve fazer para resolver essa falha?",
+  options:[
+    {id:"A",text:"Crie a política gerenciada pelo cliente em cada conta onde o conjunto de permissões estiver atribuído. Dê à política gerenciada pelo cliente o mesmo nome e as mesmas permissões em cada conta."},
+    {id:"B",text:"Remova a política gerenciada pela AWS ou a política gerenciada pelo cliente do conjunto de permissões. Crie um segundo conjunto de permissões que inclua a política removida. Aplique os conjuntos de permissões separadamente ao usuário."},
+    {id:"C",text:"Avalie a lógica da política gerenciada pela AWS e da política gerenciada pelo cliente. Resolva quaisquer conflitos de política no conjunto de permissões antes da implantação."},
+    {id:"D",text:"Não adicione o novo conjunto de permissões ao usuário. Em vez disso, edite o conjunto de permissões existente do usuário para incluir a política gerenciada pela AWS e a política gerenciada pelo cliente."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Um usuário do IAM recebe uma mensagem de Acesso Negado ao tentar acessar objetos em um bucket do Amazon S3. O usuário e o bucket do S3 estão na mesma conta da AWS. O bucket do S3 está configurado para usar criptografia do lado do servidor com chaves do AWS KMS (SSE-KMS) para criptografar todos os seus objetos em repouso, utilizando uma chave gerenciada pelo cliente da mesma conta da AWS. O bucket do S3 não possui nenhuma política definida. O usuário do IAM recebeu permissões por meio de uma política do IAM que concede a permissão kms:Decrypt para a chave gerenciada pelo cliente. A política do IAM também concede as permissões s3:List* e s3:Get* para o bucket do S3 e seus objetos.",
+  ask:"Qual das seguintes opções é uma possível razão pela qual o usuário do IAM não consegue acessar os objetos no bucket do S3?",
+  options:[
+    {id:"A",text:"A política IAM precisa permitir a permissão kms:DescribeKey."},
+    {id:"B",text:"O bucket S3 foi alterado para usar a chave gerenciada da AWS para criptografar objetos em repouso."},
+    {id:"C",text:"É necessário adicionar uma política de bucket S3 para permitir que o usuário do IAM acesse os objetos."},
+    {id:"D",text:"A política de chave KMS foi editada para remover a capacidade da conta AWS de ter acesso total à chave."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa cargas de trabalho na região us-east-1. A empresa nunca implantou recursos em outras regiões da AWS e não possui recursos multirregionais. A empresa precisa replicar suas cargas de trabalho e infraestrutura para a região us-west-1. Um engenheiro de segurança deve implementar uma solução que utilize o AWS Secrets Manager para armazenar segredos em ambas as regiões. A solução deve usar o AWS Key Management Service (AWS KMS) para criptografar os segredos. A solução deve minimizar a latência e deve funcionar mesmo que apenas uma região esteja disponível. O engenheiro de segurança utiliza o Secrets Manager para criar os segredos em us-east-1.",
+  ask:"O que o engenheiro de segurança deve fazer em seguida para atender aos requisitos?",
+  options:[
+    {id:"A",text:"Criptografe os segredos em us-east-1 usando uma chave KMS gerenciada pela AWS. Replique os segredos em us-west-1. Criptografe os segredos em us-west-1 usando uma nova chave KMS gerenciada pela AWS em us-west-1."},
+    {id:"B",text:"Criptografe os segredos em us-east-1 usando uma chave KMS gerenciada pela AWS. Configure os recursos em us-west-1 para chamar o endpoint do Secrets Manager em us-east-1."},
+    {id:"C",text:"Criptografe os segredos em us-east-1 usando uma chave KMS gerenciada pelo cliente. Configure os recursos em us-west-1 para chamar o endpoint do Secrets Manager em us-east-1."},
+    {id:"D",text:"Criptografe os segredos em us-east-1 usando uma chave KMS gerenciada pelo cliente. Replique os segredos em us-west-1. Criptografe os segredos em us-west-1 usando a chave KMS gerenciada pelo cliente de us-east-1."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa cargas de trabalho em uma conta da AWS. Um engenheiro de segurança observa algumas anomalias no Amazon GuardDuty. O engenheiro deseja investigar uma função específica do IAM e gerar um relatório de investigação. O relatório deve conter detalhes sobre o comportamento anômalo e quaisquer indicadores de comprometimento.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize o Amazon Detective para realizar uma investigação sobre a função do IAM."},
+    {id:"B",text:"Use o AWS Audit Manager para criar uma avaliação. Especifique a função do IAM. Execute um relatório de avaliação."},
+    {id:"C",text:"Use o Amazon Inspector para criar uma avaliação. Especifique a função do IAM. Execute um relatório de avaliação."},
+    {id:"D",text:"Use o Amazon Inspector para executar uma verificação sob demanda da função do IAM."}
+  ],
+  answer:["A"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma empresa configurou recentemente o Amazon GuardDuty e está recebendo um grande número de alertas de endereços IP dentro da empresa. Um engenheiro de segurança verificou que esses endereços IP são confiáveis e permitidos.",
+  ask:"Qual combinação de etapas o engenheiro de segurança deve seguir para configurar o GuardDuty de forma que ele não gere alertas para esses endereços IP? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Crie um arquivo de configuração em texto simples que contenha os endereços IP confiáveis."},
+    {id:"B",text:"Crie um arquivo de configuração JSON que contenha os endereços IP confiáveis."},
+    {id:"C",text:"Faça o upload do arquivo de configuração diretamente para o GuardDuty."},
+    {id:"D",text:"Faça o upload do arquivo de configuração para o Amazon S3. Adicione uma nova lista de IPs confiáveis ao GuardDuty que aponte para o arquivo."},
+    {id:"E",text:"Copie e cole manualmente os dados do arquivo de configuração na lista de IPs confiáveis do GuardDuty."}
+  ],
+  answer:["A","D"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma equipe de desenvolvimento está criando um conjunto de ferramentas de código aberto para gerenciar o aplicativo de software como serviço (SaaS) de uma empresa. A empresa armazena o código em um repositório público para que qualquer pessoa possa visualizá-lo e baixá-lo. A empresa descobre que o código contém uma chave de acesso e uma chave secreta do IAM que fornecem acesso a recursos internos no ambiente AWS da empresa. Um engenheiro de segurança deve implementar uma solução para identificar se houve uso não autorizado das credenciais expostas. A solução também deve impedir qualquer uso adicional das credenciais expostas.",
+  ask:"Qual combinação de etapas atenderá a esses requisitos? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Utilize o AWS Identity and Access Management Access Analyzer para determinar quais recursos foram acessados pelas credenciais expostas e quem as utilizou."},
+    {id:"B",text:"Desative a chave de acesso IAM exposta da conta IAM do usuário."},
+    {id:"C",text:"Crie uma regra no Amazon GuardDuty para bloquear o uso da chave de acesso no código-fonte."},
+    {id:"D",text:"Crie uma nova chave de acesso e uma chave secreta do IAM para o usuário cujas credenciais foram expostas."},
+    {id:"E",text:"Gere um relatório de credenciais do IAM. Verifique o relatório para determinar quando o usuário que possui a chave de acesso fez o último login."}
+  ],
+  answer:["A","B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa um aplicativo em uma instância do Amazon EC2. O aplicativo gera faturas e as armazena em um bucket do Amazon S3. O perfil da instância associado a ela possui o acesso apropriado ao bucket do S3. A empresa precisa compartilhar cada fatura com vários clientes que não possuem credenciais da AWS. Cada cliente deve poder baixar apenas suas próprias faturas. Os clientes devem baixar suas faturas em até 1 hora após a criação da fatura. Os clientes devem usar apenas credenciais temporárias para acessar os recursos da AWS da empresa. Um engenheiro de segurança cria um script que é executado na instância do EC2. O script usa o perfil da instância para gerar uma URL pré-assinada do S3 para os clientes. Cada URL pré-assinada expira após 1 hora.",
+  ask:"Qual etapa adicional atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Atualize a política do bucket S3 para garantir que os clientes que usam URLs pré-assinadas tenham as permissões s3:Get* e s3:List* para acessar os objetos S3 no bucket."},
+    {id:"B",text:"Adicione uma condição StringEquals à política de função do IAM para o perfil da instância EC2. Configure a condição da política para restringir o acesso com base na tag s3:ResourceTag/ClientId de cada fatura. Marque cada fatura gerada com o ID do cliente correspondente."},
+    {id:"C",text:"Atualize o script para usar o AWS Security Token Service (AWS STS) para obter novas credenciais a cada execução, assumindo uma nova função com permissões GetObject no S3. Use as credenciais para gerar URLs pré-assinadas."},
+    {id:"D",text:"Gere uma chave de acesso e uma chave secreta para um usuário IAM que tenha permissões s3:GetObject no bucket S3. Incorpore as chaves no script. Use as chaves para gerar as URLs pré-assinadas."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Firewall Manager, o Amazon Inspector e o AWS Shield Advanced em sua conta da AWS. A empresa deseja receber alertas caso ocorra um ataque DDoS contra a conta.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Use o Amazon Macie para detectar um evento DDoS ativo. Crie alarmes do Amazon CloudWatch que respondam às descobertas do Macie."},
+    {id:"B",text:"Use o Amazon Inspector para revisar recursos e acionar alarmes do Amazon CloudWatch para quaisquer recursos vulneráveis a ataques DDoS."},
+    {id:"C",text:"Crie um alarme do Amazon CloudWatch que monitore as métricas do Firewall Manager em busca de um evento DDoS ativo."},
+    {id:"D",text:"Crie um alarme do Amazon CloudWatch que monitore as métricas do Shield Advanced em busca de um evento DDoS ativo."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa cargas de trabalho críticas em um data center local. A empresa deseja implementar uma solução de recuperação de desastres (DR) baseada na AWS que alcance um RTO inferior a 1 hora. A empresa precisa replicar continuamente servidores físicos e virtuais. A empresa deve otimizar os custos de armazenamento de dados e uso de largura de banda. A solução de DR deve ser automatizada.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Use o AWS Backup para replicar diretamente os servidores locais para a AWS. Habilite a cópia de backup entre regiões. Configure os pontos de recuperação para corresponder ao RTO definido. Use o AWS Step Functions para automatizar as etapas de recuperação."},
+    {id:"B",text:"Configure um AWS Storage Gateway Volume Gateway para usar snapshots do Amazon EBS para recuperação. Configure o AWS Backup para gerenciar os snapshots. Crie procedimentos automatizados de recuperação."},
+    {id:"C",text:"Habilite o AWS Elastic Disaster Recovery. Configure os agentes de replicação para replicar continuamente cada servidor local. Habilite a configuração de sub-rede padrão da área de preparação."},
+    {id:"D",text:"Crie uma conexão AWS Direct Connect entre o data center local e a AWS. Configure o Amazon EventBridge para monitorar falhas e invocar funções AWS Lambda que iniciem instâncias Amazon EC2 pré-configuradas a partir de AMIs em caso de incidente."}
+  ],
+  answer:["C"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Uma empresa na França utiliza o Amazon Cognito com a interface de usuário hospedada do Cognito como agente de identidade para os processos de login e cadastro. A empresa está comercializando um aplicativo e espera que todos os usuários sejam da França. Quando o aplicativo é lançado, a equipe de segurança da empresa observa cadastros fraudulentos. A maioria dos cadastros fraudulentos é de usuários de fora da França. A equipe de segurança precisa de uma solução para realizar validação personalizada no momento do cadastro. Com base nos resultados da validação, a solução deve aceitar ou negar a solicitação de cadastro.",
+  ask:"Qual combinação de etapas atenderá a esses requisitos? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Crie um gatilho AWS Lambda de pré-cadastro. Associe a função Lambda ao grupo de usuários do Amazon Cognito."},
+    {id:"B",text:"Utilize uma instrução de regra de correspondência geográfica para configurar uma ACL da Web do AWS WAF. Associe a ACL da Web ao grupo de usuários do Amazon Cognito."},
+    {id:"C",text:"Configure um cliente de aplicativo para o grupo de usuários do Amazon Cognito do aplicativo. Use o ID do cliente de aplicativo para validar as solicitações na interface do usuário hospedada."},
+    {id:"D",text:"Atualize o grupo de usuários do Amazon Cognito do aplicativo para configurar uma restrição geográfica."},
+    {id:"E",text:"Utilize o Amazon Cognito para configurar um provedor de identidade social (IdP) para validar as solicitações na interface de usuário hospedada."}
+  ],
+  answer:["A","B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza uma organização no AWS Organizations para gerenciar várias contas da AWS. A empresa deseja conceder aos usuários acesso centralizado ao Amazon Q Developer.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Habilite o AWS IAM Identity Center e configure o Amazon Q Developer como um aplicativo gerenciado pela AWS."},
+    {id:"B",text:"Habilite o Amazon Cognito e crie um novo conjunto de identidades para o Amazon Q Developer."},
+    {id:"C",text:"Habilite o Amazon Cognito e configure o Amazon Q Developer como um aplicativo gerenciado pela AWS."},
+    {id:"D",text:"Habilite o AWS IAM Identity Center e crie um novo pool de identidades para o Amazon Q Developer."}
+  ],
+  answer:["A"]
+},
+{
+  type:"multi",
+  pick:2,
+  stem:"Um site de comércio eletrônico ficou fora do ar por 1 hora após um ataque DDoS. Os usuários não conseguiram acessar o site durante o período do ataque. A equipe de segurança da empresa está preocupada com possíveis ataques futuros e deseja se preparar para tais eventos. A empresa precisa minimizar o tempo de inatividade em sua resposta a ataques semelhantes no futuro.",
+  ask:"Quais medidas ajudariam a atingir esse objetivo? (Escolha duas.)",
+  options:[
+    {id:"A",text:"Habilite o Amazon GuardDuty para monitorar automaticamente atividades maliciosas e bloquear acessos não autorizados."},
+    {id:"B",text:"Assine o AWS Shield Advanced e entre em contato com o Suporte da AWS em caso de ataque."},
+    {id:"C",text:"Utilize os logs de fluxo da VPC para monitorar o tráfego de rede e uma função AWS Lambda para bloquear automaticamente o IP de um invasor usando grupos de segurança."},
+    {id:"D",text:"Configure uma regra do Amazon EventBridge para monitorar os eventos do AWS CloudTrail em tempo real, use regras do AWS Config para auditar a configuração e use o AWS Systems Manager para correção."},
+    {id:"E",text:"Utilize o AWS WAF para criar regras de resposta a esses ataques."}
+  ],
+  answer:["B","E"]
+},
+{
+  type:"single",
+  stem:"Uma empresa possui duas contas da AWS: Conta A e Conta B. Cada conta possui uma VPC. Um aplicativo que roda na VPC da Conta A precisa gravar dados em um bucket do Amazon S3 na Conta B. O aplicativo na Conta A já possui permissão para gravar dados no bucket do S3 da Conta B. O aplicativo e o bucket do S3 estão na mesma região da AWS. A empresa não pode enviar tráfego de rede pela internet pública.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Em ambas as contas, crie um gateway de trânsito e anexos de VPC em uma sub-rede em cada Zona de Disponibilidade. Atualize as tabelas de roteamento da VPC."},
+    {id:"B",text:"Implante um dispositivo VPN de software na Conta A. Crie uma conexão VPN entre o dispositivo VPN de software e um gateway privado virtual na Conta B."},
+    {id:"C",text:"Crie uma conexão de peering de VPC entre a VPC na Conta A e a VPC na Conta B. Atualize as tabelas de roteamento da VPC, as ACLs de rede e os grupos de segurança para permitir o tráfego de rede entre os intervalos de IP emparelhados."},
+    {id:"D",text:"Na Conta A, crie um ponto de extremidade VPC de gateway para o Amazon S3. Atualize a tabela de rotas da VPC na Conta A."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança precisa criar uma solução para reativar o AWS CloudTrail em várias regiões da AWS caso ele seja desativado.",
+  ask:"Qual é a maneira MAIS eficiente de implementar essa solução?",
+  options:[
+    {id:"A",text:"Utilize o AWS Config com uma regra gerenciada para iniciar a correção AWS-EnableCloudTrail."},
+    {id:"B",text:"Crie um evento do Amazon EventBridge com uma origem de evento cloudtrail.amazonaws.com e um nome de evento StartLogging para invocar uma função AWS Lambda que chamará a API StartLogging."},
+    {id:"C",text:"Crie um alarme do Amazon CloudWatch com uma origem de evento cloudtrail.amazonaws.com e um nome de evento StopLogging para invocar uma função AWS Lambda que chamará a API StartLogging."},
+    {id:"D",text:"Monitore o AWS Trusted Advisor para garantir que o registro do CloudTrail esteja ativado."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa mantém sistemas legados locais e recursos na AWS. Os recursos da AWS incluem uma tabela do Amazon DynamoDB e um bucket do Amazon S3. Os sistemas legados locais precisam se conectar ao DynamoDB e ao Amazon S3 regularmente. Atualmente, a empresa utiliza um host bastion em uma sub-rede pública em uma VPC. A empresa se conecta ao host bastion usando uma chave privada SSH armazenada localmente. O perfil de instância atribuído ao host bastion tem acesso total ao Amazon S3 e ao DynamoDB. Uma equipe de segurança emite uma nova política interna que exige a remoção de todos os hosts bastion. A política exige que todos os sistemas se autentiquem usando autenticação baseada em certificado.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Configure uma conexão AWS Direct Connect e crie uma conexão VPN com uma VPC que tenha acesso aos endpoints da VPC para os serviços necessários."},
+    {id:"B",text:"Configure os sistemas locais para usar o AWS IAM Roles Anywhere para autenticação."},
+    {id:"C",text:"Use a AWS Private Certificate Authority para emitir certificados SSL e permitir que sistemas locais acessem recursos na AWS."},
+    {id:"D",text:"Crie um usuário do IAM que tenha permissão para assumir temporariamente uma função do IAM e para usar as credenciais dessa função assumida temporariamente para acessar os recursos necessários."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza uma organização no AWS Organizations para gerenciar várias contas da AWS. Os usuários acessam as contas da AWS utilizando usuários do IAM e chaves de acesso secretas. Uma equipe de segurança exige que todos os acessos às contas utilizem credenciais de segurança temporárias que expiram após 60 minutos. Os usuários devem utilizar um provedor de identidade (IdP) baseado em SAML para acessar as contas.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Habilite o acesso ao AWS Security Token Service (AWS STS). Certifique-se de que os usuários executem o comando get-session-token da AWS CLI com uma duração apropriada. Exija que os usuários utilizem credenciais temporárias do STS para acessar as contas da AWS."},
+    {id:"B",text:"Configure o AWS IAM Identity Center e um IdP externo. Configure os conjuntos de permissões que permitam o acesso necessário aos usuários. Configure um limite de duração de sessão. Exija que os usuários recuperem as credenciais de SSO usando a AWS CLI. Remova os usuários do IAM das contas da AWS."},
+    {id:"C",text:"Configure o AWS Secrets Manager e o Amazon Cognito em cada conta da AWS. Configure um pool de identidades do Cognito para usar um IdP externo e conectar-se ao Secrets Manager. Habilite a rotação gerenciada de segredos no Secrets Manager. Certifique-se de que os usuários executem o comando get-secret-value da AWS CLI para acessar as contas da AWS."},
+    {id:"D",text:"Habilite o AWS IAM Roles Anywhere na conta de gerenciamento da organização. Certifique-se de que os usuários instalem a ferramenta auxiliar de credenciais. Configure as funções do IAM na conta de gerenciamento com uma duração de sessão apropriada. Certifique-se de que os usuários obtenham credenciais temporárias da ferramenta auxiliar de credenciais para acessar as contas da AWS."}
+  ],
+  answer:["B"]
+},
+{
+  type:"order",
+  stem:"Uma empresa está desenvolvendo um processo de resposta a incidentes para colocar em quarentena hosts do Amazon EC2 infectados por malware. A empresa utiliza uma organização no AWS Organizations para gerenciar várias contas da AWS. A empresa configura o AWS Security Hub na organização para receber resultados de várias contas que são executadas em várias regiões da AWS. Um engenheiro de segurança desenvolve uma função AWS Lambda para remover todas as regras de todos os grupos de segurança para qualquer instância EC2 que a empresa suspeite estar infectada por malware.",
+  ask:"Selecione e ordene as etapas corretas da lista a seguir para implantar e usar a função Lambda como uma ação personalizada no Security Hub. Selecione cada etapa uma vez ou nenhuma. (Selecione e ordene TRÊS etapas.)",
+  pool:[
+    "Criar uma ação personalizada que utilize a função Lambda no Security Hub.",
+    "Criar e aplicar um conjunto de filtros à regra do Amazon EventBridge no Security Hub.",
+    "Definir uma regra no Amazon EventBridge.",
+    "Selecionar a ação personalizada no Security Hub para descobertas de hosts do EC2.",
+    "Selecionar a ação personalizada no Security Hub para descobertas de grupos de segurança."
+  ],
+  answer:[0,2,3]
+},
+{
+  type:"single",
+  stem:"Uma empresa começa a usar o AWS WAF após experimentar um aumento no tráfego para seus aplicativos web públicos. Um engenheiro de segurança precisa determinar se o aumento no tráfego se deve a ataques na camada de aplicação. O engenheiro de segurança precisa de uma solução para analisar o tráfego do AWS WAF.",
+  ask:"Qual solução atenderá a esse requisito?",
+  options:[
+    {id:"A",text:"Configure o AWS WAF para enviar logs para uma trilha do AWS CloudTrail. Crie um fluxo de entrega do Amazon Data Firehose para enviar os logs para o Amazon OpenSearch Service. Use os painéis do OpenSearch e um conector do Amazon Athena para consultar os logs."},
+    {id:"B",text:"Configure o AWS WAF para enviar logs para um bucket do Amazon S3. Configure uma tabela do OpenSearch com uma projeção de partição do bucket do S3. Use o OpenSearch para consultar os dados no bucket do S3."},
+    {id:"C",text:"Configure o AWS WAF para enviar logs para um bucket do Amazon S3. Configure uma tabela do Amazon Athena com uma projeção de partição do bucket do S3. Use o Athena para consultar os dados no bucket do S3."},
+    {id:"D",text:"Configure o AWS WAF para enviar logs para uma trilha do AWS CloudTrail. Crie um fluxo de entrega do Amazon Data Firehose para enviar os logs para um bucket do Amazon S3. Use o Amazon Athena para consultar os dados no bucket do S3."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa com 50 contas da AWS gerenciadas pelo AWS Organizations precisa configurar uma solução centralizada de detecção de ameaças. A solução deve identificar atividades suspeitas e potencialmente maliciosas em todas as contas da organização. A empresa utiliza o AWS Control Tower e deseja centralizar as descobertas de segurança em uma conta de auditoria. Uma equipe de segurança deve receber alertas por e-mail em até 5 minutos após qualquer nova descoberta de segurança.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Configure o Amazon GuardDuty com um administrador delegado na conta de auditoria. Habilite o GuardDuty em todas as contas de membros por meio da conta do administrador delegado. Crie uma regra do Amazon EventBridge para enviar as descobertas do GuardDuty para um tópico do Amazon SNS que entrega notificações por e-mail à equipe de segurança."},
+    {id:"B",text:"Configure o Amazon GuardDuty em cada conta de membro e crie funções do IAM para permitir o acesso entre contas a partir da conta de auditoria. Configure alarmes do Amazon CloudWatch em cada conta para monitorar descobertas de segurança e enviar notificações para um tópico do Amazon SNS na conta de auditoria."},
+    {id:"C",text:"Habilite o AWS Config na conta de auditoria e crie regras personalizadas para detectar problemas de segurança em toda a organização. Use o AWS Systems Manager para coletar informações de segurança de todas as contas de membros e armazená-las em um bucket centralizado do Amazon S3. Crie uma função do AWS Lambda para monitorar o bucket do S3 e enviar notificações por e-mail para a equipe de segurança quando novas informações forem detectadas."},
+    {id:"D",text:"Implante agentes do Amazon Inspector em todas as instâncias do Amazon EC2 na organização. Configure os agentes para enviar relatórios a um console central do Amazon Inspector na conta de auditoria. Crie regras do Amazon EventBridge em cada conta membro para encaminhar as descobertas a um tópico do Amazon SNS na conta de auditoria."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança precisa proteger uma aplicação web pública que roda em uma VPC. A VPC hospeda a origem de uma distribuição do Amazon CloudFront. A aplicação sofreu múltiplos ataques DDoS de camada 7. Uma ACL web do AWS WAF está associada à distribuição do CloudFront. A ACL web contém uma regra gerenciada pela AWS para proteger contra endereços IP conhecidos com má reputação. O engenheiro de segurança deve configurar uma solução automatizada que detecte e mitigue ataques DDoS de camada 7 em tempo real, sem intervenção manual.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Habilite o AWS Shield Advanced na distribuição do CloudFront. Configure alertas no Amazon CloudWatch para indicadores de DDoS."},
+    {id:"B",text:"Habilite o AWS Shield Advanced e configure o engajamento proativo com a equipe de resposta a DDoS da AWS."},
+    {id:"C",text:"Implante o AWS Network Firewall na VPC. Crie políticas de segurança que detectem indicadores de DDoS. Crie uma função AWS Lambda para atualizar automaticamente as regras da ACL da web durante um ataque."},
+    {id:"D",text:"Adicione uma regra baseada em taxa à ACL da Web. Habilite o AWS Shield Advanced. Habilite a mitigação automática de DDoS na camada de aplicação na distribuição do CloudFront."}
+  ],
+  answer:["D"]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Organizations com todos os recursos habilitados. A empresa habilitou o AWS Security Hub em todas as contas de membros e em todas as regiões da AWS. A empresa criou uma VPC na região eu-central-1 em uma conta de membro da AWS. Um engenheiro de segurança verificou que nenhuma regra de grupo de segurança na VPC permite tráfego de entrada de todos os endereços IP na porta TCP 22. O engenheiro de segurança precisa de um sistema automatizado que impeça a criação de regras de grupo de segurança na VPC que permitam tráfego de todos os endereços IP na porta TCP 22.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Habilite um registro organizacional do AWS CloudTrail que registre logs em um grupo de logs do Amazon CloudWatch Logs. Crie um alarme do CloudWatch com base em um filtro de métrica do grupo de logs. Configure o alarme para publicar em um tópico do Amazon SNS quando uma regra de grupo de segurança for adicionada, permitindo tráfego de entrada de todos os endereços IP. Inscreva o endereço de e-mail do engenheiro de segurança no tópico do SNS."},
+    {id:"B",text:"Crie uma regra do Amazon EventBridge que filtre as descobertas do Security Hub sobre regras de grupos de segurança que permitem tráfego de entrada de todos os endereços IP na porta TCP 22. Configure a regra do EventBridge para direcionar uma função do AWS Lambda que remova a regra de grupo de segurança indesejada."},
+    {id:"C",text:"Crie um SCP que impeça a criação ou modificação de regras de grupo de segurança que permitam tráfego de entrada de todos os endereços IP na porta TCP 22."},
+    {id:"D",text:"Implante o AWS Network Firewall com uma regra que inspecione todo o tráfego de entrada e impeça o tráfego de entrada na porta TCP 22."}
+  ],
+  answer:["C"]
+},
+{
+  type:"single",
+  stem:"Uma empresa executa um aplicativo em uma frota de instâncias do Amazon EC2. O aplicativo é acessível a usuários em todo o mundo. A empresa associa uma ACL da Web do AWS WAF a um Application Load Balancer (ALB) que roteia o tráfego para as instâncias do EC2. Um engenheiro de segurança está investigando um aumento repentino no tráfego para o aplicativo. O engenheiro de segurança descobre uma quantidade significativa de solicitações potencialmente maliciosas provenientes de centenas de endereços IP em dois países. O engenheiro de segurança deseja limitar rapidamente as solicitações potencialmente maliciosas. Ele não quer impedir que usuários legítimos acessem o aplicativo.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Utilize o AWS WAF para implementar uma regra baseada em taxa para todas as solicitações recebidas."},
+    {id:"B",text:"Utilize o AWS WAF para implementar uma regra de correspondência geográfica para bloquear todo o tráfego de entrada proveniente dos dois países."},
+    {id:"C",text:"Edite o grupo de segurança do ALB para incluir uma regra de correspondência geográfica para bloquear todo o tráfego de entrada dos dois países."},
+    {id:"D",text:"Adicione regras de negação ao grupo de segurança do ALB que proíbam solicitações de entrada provenientes dos endereços IP."}
+  ],
+  answer:["A"]
+},
+{
+  type:"match",
+  stem:"Um engenheiro de segurança precisa se preparar para uma auditoria de segurança de uma conta da AWS.",
+  ask:"Selecione o recurso da AWS correto para atender a cada requisito. Selecione cada recurso uma vez ou nenhuma vez.",
+  pool:[
+    "Relatórios do AWS Artifact",
+    "Controles do AWS Audit Manager",
+    "Pacotes de conformidade do AWS Config",
+    "Regras do AWS Config",
+    "Investigações do Amazon Detective",
+    "Analisadores de acesso interno do AWS IAM Access Analyzer"
+  ],
+  prompts:[
+    {t:"Coletar automaticamente evidências do AWS CloudTrail, do AWS Config e do AWS Security Hub para um relatório de avaliação.",a:1},
+    {t:"Determinar quais entidades principais do IAM dentro da conta da AWS têm acesso a um recurso especificado.",a:5},
+    {t:"Baixar documentos de segurança e conformidade da AWS sob demanda.",a:0}
+  ]
+},
+{
+  type:"single",
+  stem:"Uma empresa utiliza o AWS Organizations para gerenciar uma organização composta por três Unidades Organizacionais (UOs) de cargas de trabalho: Produção, Desenvolvimento e Teste. A empresa utiliza modelos do AWS CloudFormation para definir e implantar a infraestrutura de cargas de trabalho em contas da AWS associadas às UOs. Diferentes SCPs estão anexados a cada UO de carga de trabalho. A empresa implantou com sucesso uma atualização de pilha do CloudFormation em cargas de trabalho nas UOs de Desenvolvimento e Teste. Quando a empresa utiliza o mesmo modelo do CloudFormation para implantar a atualização de pilha em uma conta na UO de Produção, a atualização falha. A mensagem de erro reporta permissões insuficientes do IAM.",
+  ask:"Qual é o PRIMEIRO passo que um engenheiro de segurança deve tomar para solucionar esse problema?",
+  options:[
+    {id:"A",text:"Analise os logs do AWS CloudTrail na conta da UO de Produção. Procure por quaisquer chamadas de API com falha do CloudFormation durante a tentativa de implantação."},
+    {id:"B",text:"Remova todos os SCPs associados à UO de Produção. Execute novamente a atualização da pilha do CloudFormation para determinar se os SCPs estavam impedindo as chamadas da API do CloudFormation."},
+    {id:"C",text:"Confirme se a função usada pelo CloudFormation tem permissões suficientes para criar, atualizar e excluir os recursos referenciados no modelo do CloudFormation."},
+    {id:"D",text:"Faça com que todos os SCPs associados à UO de Produção sejam iguais aos SCPs associados à UO de Teste."}
+  ],
+  answer:["A"]
+},
+{
+  type:"match",
+  stem:"Uma empresa utiliza uma organização no AWS Organizations para gerenciar várias contas da AWS. Um engenheiro de segurança precisa monitorar a conformidade de segurança dos recursos da AWS em toda a organização. O engenheiro de segurança deseja receber notificações quando algum recurso da AWS não estiver em conformidade com as políticas de segurança da empresa.",
+  ask:"Selecione a solução baseada em AWS Config correta para atender a cada requisito. Selecione cada solução apenas uma vez.",
+  pool:[
+    "Agregador do AWS Config",
+    "Pacotes de conformidade do AWS Config",
+    "AWS Config com AWS Systems Manager",
+    "Regras do AWS Config",
+    "AWS Config com AWS User Notifications"
+  ],
+  prompts:[
+    {t:"Fornecer uma coleção de regras de conformidade que podem ser implantadas em toda a organização.",a:1},
+    {t:"Centralizar dados de conformidade de várias contas e regiões da AWS em uma única conta para visibilidade unificada.",a:0},
+    {t:"Avaliar as configurações dos recursos da AWS em relação às configurações desejadas.",a:3},
+    {t:"Tomar medidas corretivas automaticamente quando os recursos não estiverem em conformidade.",a:2},
+    {t:"Entregar notificações quando alterações de configuração ou violações de conformidade forem detectadas.",a:4}
+  ]
+},
+{
+  type:"match",
+  stem:"Um engenheiro de segurança está usando a ferramenta AWS Well-Architected para avaliar um aplicativo web de várias camadas hospedado por uma empresa na AWS. Durante a avaliação, o engenheiro de segurança identifica diversos recursos que violam os princípios de design do pilar de segurança do Well-Architected Framework.",
+  ask:"Selecione o princípio de design do pilar de segurança que cada constatação da avaliação viola principalmente. Selecione cada princípio apenas uma vez.",
+  pool:[
+    "Configurar o registro de logs de serviços e aplicativos.",
+    "Reduzir o gerenciamento manual e o acesso interativo.",
+    "Implantar software programaticamente.",
+    "Controlar o fluxo de tráfego nas camadas da rede.",
+    "Proteger os dados em trânsito."
+  ],
+  prompts:[
+    {t:"Os servidores de aplicação exigem aplicação manual de patches por meio de acesso direto de administrador, o que ignora os pipelines de implantação automatizados.",a:2},
+    {t:"As instâncias de banco de dados de produção permitem sessões interativas de desenvolvedores para solução de problemas e análise de dados.",a:1},
+    {t:"Os grupos de segurança permitem acesso nas portas 0–65535 a partir de 0.0.0.0/0. Um WAF está configurado com regras padrão.",a:3},
+    {t:"A comunicação entre as camadas de banco de dados e de aplicação da carga de trabalho usa HTTP.",a:4},
+    {t:"Os eventos de segurança são detectados apenas por meio de revisões manuais semanais de logs brutos do AWS CloudTrail, que não fornecem alertas automatizados.",a:0}
+  ]
+},
+{
+  type:"single",
+  stem:"Um engenheiro de segurança precisa implementar uma solução de registro de logs que capture informações detalhadas sobre objetos em um bucket do Amazon S3. A solução deve incluir detalhes como a identidade IAM que fez a requisição e o horário em que o objeto foi acessado. Os dados devem ser estruturados e estar disponíveis em tempo quase real.",
+  ask:"Qual solução atende a esses requisitos?",
+  options:[
+    {id:"A",text:"Habilite o registro de acesso ao servidor do Amazon S3 no bucket do S3. Crie um novo bucket do S3 para armazenar os registros. Analise os registros do bucket do S3 configurado para registro."},
+    {id:"B",text:"Habilite o registro de eventos de dados do AWS CloudTrail. Crie um novo bucket do S3 para armazenar os registros. Analise os registros do bucket do S3."},
+    {id:"C",text:"Configure as regras do AWS Config para registrar o acesso aos objetos armazenados no bucket do S3."},
+    {id:"D",text:"Habilite o Amazon Macie para registrar o acesso aos objetos armazenados no bucket S3."}
+  ],
+  answer:["B"]
+},
+{
+  type:"single",
+  stem:"Uma empresa precisa desenvolver um aplicativo de assinatura de código que utilize uma autoridade certificadora (CA) para assinar um certificado de assinatura de código. A solução deve usar uma chave assimétrica do AWS Key Management Service (AWS KMS). A solução precisa coletar e armazenar evidências imutáveis sobre a criação, a origem e o uso da chave KMS para fins de conformidade. Essas informações devem ser disponibilizadas para auditores internos.",
+  ask:"Qual solução atende a esses requisitos?",
+  options:[
+    {id:"A",text:"Crie um bucket do Amazon S3 com o Bloqueio de Objetos do S3 ativado. Crie uma trilha do AWS CloudTrail com um seletor de eventos e validação de arquivo de log ativada para todos os eventos CreateKey do kms.amazonaws.com. Configure o seletor de eventos para enviar os eventos CreateKey para o bucket do S3. Crie a chave do KMS. Atualize o seletor de eventos para filtrar chamadas de API que fazem referência ao ARN da chave do KMS. Forneça aos auditores acesso ao bucket do S3."},
+    {id:"B",text:"Implemente o registro de logs para operações de aplicativos que fazem referência à chave KMS. Certifique-se de que os logs contenham todos os metadados associados. Armazene os logs em um grupo de logs do Amazon CloudWatch Logs. Configure uma exportação automática do grupo de logs e envie a exportação para os auditores."},
+    {id:"C",text:"Crie uma tabela no Amazon DynamoDB que os auditores possam acessar. Crie uma função AWS Lambda que seja invocada por uma regra do Amazon EventBridge. Configure a regra do EventBridge para monitorar as chamadas da API do KMS. Configure a regra para filtrar todas as chamadas da API que fazem referência ao ARN da chave do KMS. Configure a função Lambda para armazenar o conteúdo das chamadas da API na tabela do DynamoDB."},
+    {id:"D",text:"Configure o Amazon CloudWatch Logs Insights com uma métrica personalizada para rastrear o uso da chave KMS. Visualize as métricas usando um painel do CloudWatch com monitoramento em tempo real. Configure alarmes do CloudWatch. Use um filtro de assinatura para replicar os dados em uma conta separada para revisão pelos auditores."}
+  ],
+  answer:["A"]
+},
+{
+  type:"single",
+  stem:"Uma empresa está planejando implantar um novo ambiente de análise de logs. A empresa precisa implementar uma solução para analisar logs de múltiplos serviços da AWS em tempo quase real. A solução deve permitir a busca nos logs. Além disso, deve enviar alertas para um tópico existente do Amazon Simple Notification Service (Amazon SNS) quando logs específicos corresponderem às regras de detecção.",
+  ask:"Qual solução atenderá a esses requisitos?",
+  options:[
+    {id:"A",text:"Analise os registros usando o Amazon OpenSearch Service. Pesquise os registros na API do OpenSearch. Use o OpenSearch Service Security Analytics para comparar os registros com as regras de detecção e enviar alertas para o tópico do SNS."},
+    {id:"B",text:"Analise os logs usando o AWS Security Hub. Pesquise os logs na página de descobertas do Security Hub. Crie ações personalizadas para corresponder os logs às regras de detecção e para enviar alertas ao tópico do SNS."},
+    {id:"C",text:"Analise os logs usando o Amazon CloudWatch Logs. Use um filtro de assinatura para corresponder os logs às regras de detecção e enviar alertas para o tópico do SNS. Pesquise os logs manualmente usando o CloudWatch Logs Insights."},
+    {id:"D",text:"Analise os logs usando o Amazon QuickSight. Pesquise os logs listando os resultados da consulta em um painel. Execute consultas para corresponder os logs às regras de detecção e para enviar alertas ao tópico do SNS."}
+  ],
+  answer:["A"]
+}
+];
+
+/* ============================ estado ============================ */
+const LETTERS = ["A","B","C","D","E","F","G"];
+const TOTAL_SECONDS = 170 * 60;
+const TYPE_LABEL = {
+  single:"Múltipla escolha",
+  multi:"Resposta múltipla",
+  order:"Ordenação",
+  match:"Correspondência"
+};
+
+let order = [];
+let state = [];
+let cur = 0;
+let started = false;
+let finished = false;
+let showNav = false;
+let left = TOTAL_SECONDS;
+let ticker = null;
+
+const el = id => document.getElementById(id);
+const root = el("root");
+
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function q(){ return QUESTIONS[order[cur]]; }
+function s(){ return state[order[cur]]; }
+
+function build(shuffleQ, shuffleO){
+  order = QUESTIONS.map((_,i)=>i);
+  if(shuffleQ) shuffle(order);
+  state = QUESTIONS.map(qq=>{
+    const st = {locked:false, correct:null, flagged:false, picked:[], slots:[]};
+    if(qq.type==="single" || qq.type==="multi"){
+      st.optOrder = qq.options.map((_,i)=>i);
+      if(shuffleO) shuffle(st.optOrder);
+    }
+    if(qq.type==="order") st.slots = new Array(qq.answer.length).fill("");
+    if(qq.type==="match") st.slots = new Array(qq.prompts.length).fill("");
+    return st;
+  });
+  cur = 0; started = true; finished = false; left = TOTAL_SECONDS;
+  el("meta").hidden = false;
+  el("bar").hidden = false;
+  clearInterval(ticker);
+  ticker = setInterval(tick, 1000);
+  render();
+}
+
+function tick(){
+  if(!started || finished) return;
+  if(left > 0) left--;
+  paintClock();
+}
+function paintClock(){
+  const m = Math.floor(left/60), sec = left%60;
+  const c = el("clock");
+  c.textContent = String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  c.style.color = left <= 300 ? "#ffb3a7" : "#fff";
+}
+
+/* ============================ correção ============================ */
+function ready(qq, st){
+  if(qq.type==="single") return st.picked.length===1;
+  if(qq.type==="multi")  return st.picked.length===qq.pick;
+  return st.slots.every(v=>v!=="");
+}
+function grade(qq, st){
+  if(qq.type==="single" || qq.type==="multi"){
+    const chosen = st.picked.map(i=>qq.options[i].id).sort().join(",");
+    return chosen === [...qq.answer].sort().join(",");
+  }
+  if(qq.type==="order") return st.slots.every((v,i)=>Number(v)===qq.answer[i]);
+  return st.slots.every((v,i)=>Number(v)===qq.prompts[i].a);
+}
+function answeredCount(){ return state.filter(x=>x.locked).length; }
+function correctCount(){ return state.filter(x=>x.correct===true).length; }
+
+/* ============================ telas ============================ */
+function renderIntro(){
+  el("meta").hidden = true;
+  el("bar").hidden = true;
+  el("pbar").style.width = "0%";
+  root.innerHTML = `
+  <section class="intro">
+    <span style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700">Exame de prática · Português (Brasil)</span>
+    <h1>AWS Certified Security – Specialty</h1>
+    <p class="sub">Código do exame SCS-C03 · Banco de ${QUESTIONS.length} questões</p>
+
+    <dl class="facts">
+      <div class="fact"><dt>Questões</dt><dd>${QUESTIONS.length}</dd></div>
+      <div class="fact"><dt>Duração</dt><dd>170 min</dd></div>
+      <div class="fact"><dt>Referência de aprovação</dt><dd>75%</dd></div>
+      <div class="fact"><dt>Formatos</dt><dd>4</dd></div>
+    </dl>
+
+    <div class="rule"></div>
+
+    <h2 style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px">Como funciona</h2>
+    <ul class="rules">
+      <li>Cada questão é respondida individualmente. O gabarito permanece oculto até você usar <b>Confirmar resposta</b>.</li>
+      <li>Depois de confirmar, a questão é travada: o resultado aparece e a resposta correta é destacada.</li>
+      <li>Questões de resposta múltipla indicam quantas alternativas selecionar. Ordenação e correspondência usam listas suspensas.</li>
+      <li>Use <b>Marcar para revisão</b> para voltar depois e <b>Revisar questões</b> para navegar pelo exame.</li>
+      <li>O cronômetro é apenas uma referência de ritmo. Ele não encerra o exame.</li>
+    </ul>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="shQ"><span>Embaralhar as questões<small>A ordem muda a cada tentativa.</small></span></label>
+      <label class="toggle"><input type="checkbox" id="shO"><span>Embaralhar as alternativas<small>Vale para múltipla escolha e resposta múltipla.</small></span></label>
+    </div>
+
+    <button class="primary" id="btnStart">Iniciar exame</button>
+  </section>`;
+  el("btnStart").onclick = () => build(el("shQ").checked, el("shO").checked);
+}
+
+function navPanel(){
+  if(!showNav) return "";
+  const cells = order.map((qi,pos)=>{
+    const st = state[qi];
+    let cls = "gcell";
+    if(st.correct===true) cls += " ok";
+    if(st.correct===false) cls += " bad";
+    if(st.flagged) cls += " flag";
+    if(pos===cur) cls += " here";
+    return `<button class="${cls}" data-go="${pos}">${pos+1}</button>`;
+  }).join("");
+  return `
+  <section class="nav-panel">
+    <div class="nav-legend">
+      <span><i style="background:#fff"></i>Não respondida</span>
+      <span><i style="background:var(--green-tint);border-color:var(--green)"></i>Correta</span>
+      <span><i style="background:var(--red-tint);border-color:var(--red)"></i>Incorreta</span>
+      <span><i style="background:var(--orange);border-color:var(--orange);border-radius:50%"></i>Marcada para revisão</span>
+    </div>
+    <div class="grid">${cells}</div>
+  </section>`;
+}
+
+function optionsHTML(qq, st){
+  const input = qq.type==="single" ? "radio" : "checkbox";
+  return `<ul class="opts">` + st.optOrder.map((oi,pos)=>{
+    const o = qq.options[oi];
+    const sel = st.picked.includes(oi);
+    const isRight = qq.answer.includes(o.id);
+    let cls = "opt";
+    let mark = "";
+    if(st.locked){
+      if(isRight){ cls += " ok"; mark = `<span class="mark ok">Correta</span>`; }
+      else if(sel){ cls += " bad"; mark = `<span class="mark bad">Sua escolha</span>`; }
+    } else if(sel){ cls += " sel"; }
+    return `<li><label class="${cls}">
+      <input type="${input}" name="opt" value="${oi}" ${sel?"checked":""} ${st.locked?"disabled":""}>
+      <span class="letter">${LETTERS[pos]}</span>
+      <span class="txt">${o.text?esc(o.text):""}${o.code?`<pre class="code">${esc(o.code)}</pre>`:""}</span>
+      ${mark}
+    </label></li>`;
+  }).join("") + `</ul>`;
+}
+
+function slotsHTML(qq, st){
+  const isOrder = qq.type==="order";
+  const pool = isOrder ? qq.pool : qq.pool;
+  const rows = st.slots.map((val,i)=>{
+    const right = isOrder ? qq.answer[i] : qq.prompts[i].a;
+    let cls = "pair";
+    let line = "";
+    if(st.locked){
+      const ok = Number(val)===right;
+      cls += ok ? " ok" : " bad";
+      line = ok
+        ? `<div class="answerline">Correta</div>`
+        : `<div class="answerline bad">Correta: ${esc(pool[right])}</div>`;
+    }
+    const label = isOrder ? `Etapa ${i+1}` : `Requisito ${i+1}`;
+    const head = isOrder ? "" : `<div class="ptext">${esc(qq.prompts[i].t)}</div>`;
+    const opts = [`<option value="">Selecionar…</option>`].concat(
+      pool.map((p,pi)=>`<option value="${pi}" ${String(val)===String(pi)?"selected":""}>${esc(p)}</option>`)
+    ).join("");
+    return `<div class="${cls}">
+      <div class="plabel">${label}</div>
+      ${head}
+      <select data-slot="${i}" ${st.locked?"disabled":""}>${opts}</select>
+      ${line}
+    </div>`;
+  }).join("");
+  return `<div class="pairs">${rows}</div>`;
+}
+
+function verdictHTML(st){
+  if(!st.locked) return "";
+  return st.correct
+    ? `<div class="verdict ok"><span class="badge">Correto</span> Resposta correta.</div>`
+    : `<div class="verdict bad"><span class="badge">Incorreto</span> Resposta incorreta.</div>`;
+}
+
+function renderQuestion(){
+  const qq = q(), st = s();
+  el("pos").textContent = (cur+1)+"/"+order.length;
+  el("pbar").style.width = ((cur+1)/order.length*100)+"%";
+  el("counter").innerHTML = `Respondidas <b>${answeredCount()}</b> de ${order.length} · Corretas <b>${correctCount()}</b>`;
+
+  root.innerHTML = navPanel() + `
+  <section class="card ${st.locked?"locked":""}">
+    <div class="card-head">
+      <span class="qnum">Questão ${cur+1} de ${order.length}</span>
+      <span class="tag">${TYPE_LABEL[qq.type]}</span>
+      <button class="flagbtn" id="btnFlag" aria-pressed="${st.flagged}">${st.flagged?"Marcada para revisão":"Marcar para revisão"}</button>
+    </div>
+    <div class="card-body">
+      <p class="stem">${esc(qq.stem)}</p>
+      ${qq.code?`<pre class="code">${esc(qq.code)}</pre>`:""}
+      ${qq.ask?`<p class="stem" style="margin-top:14px"><b>${esc(qq.ask)}</b></p>`:""}
+      ${qq.type==="multi"?`<p class="hint">Selecione ${qq.pick} alternativas.</p>`:""}
+      ${(qq.type==="single"||qq.type==="multi") ? optionsHTML(qq,st) : slotsHTML(qq,st)}
+      ${verdictHTML(st)}
+    </div>
+  </section>`;
+
+  // eventos das alternativas
+  root.querySelectorAll('input[name="opt"]').forEach(inp=>{
+    inp.onchange = () => {
+      const v = Number(inp.value);
+      if(qq.type==="single"){ st.picked = [v]; }
+      else {
+        if(inp.checked){
+          if(st.picked.length >= qq.pick){ inp.checked = false; return; }
+          st.picked.push(v);
+        } else {
+          st.picked = st.picked.filter(x=>x!==v);
+        }
+      }
+      renderQuestion();
+    };
+  });
+  root.querySelectorAll("select[data-slot]").forEach(sl=>{
+    sl.onchange = () => { st.slots[Number(sl.dataset.slot)] = sl.value; syncButtons(); };
+  });
+  root.querySelectorAll("[data-go]").forEach(b=>{
+    b.onclick = () => { cur = Number(b.dataset.go); renderQuestion(); };
+  });
+  el("btnFlag").onclick = () => { st.flagged = !st.flagged; renderQuestion(); };
+
+  syncButtons();
+}
+
+function syncButtons(){
+  const qq = q(), st = s();
+  const cf = el("btnConfirm");
+  el("btnPrev").disabled = cur === 0;
+  el("btnNext").disabled = cur >= order.length-1;
+  if(st.locked){
+    cf.textContent = cur >= order.length-1 ? "Ver resultado" : "Próxima questão";
+    cf.disabled = false;
+  } else {
+    cf.textContent = "Confirmar resposta";
+    cf.disabled = !ready(qq, st);
+  }
+}
+
+function confirmAnswer(){
+  const qq = q(), st = s();
+  if(st.locked){
+    if(cur >= order.length-1) renderResults();
+    else { cur++; renderQuestion(); }
+    return;
+  }
+  if(!ready(qq, st)) return;
+  st.locked = true;
+  st.correct = grade(qq, st);
+  renderQuestion();
+}
+
+function renderResults(){
+  finished = true;
+  clearInterval(ticker);
+  el("bar").hidden = true;
+  const done = answeredCount(), right = correctCount();
+  const pct = done ? Math.round(right/done*100) : 0;
+  const pass = pct >= 75;
+  const rows = order.map((qi,pos)=>{
+    const st = state[qi];
+    const stat = st.correct===true ? `<td class="st-ok">Correta</td>`
+      : st.correct===false ? `<td class="st-bad">Incorreta</td>`
+      : `<td class="st-none">Não respondida</td>`;
+    return `<tr>
+      <td style="font-family:var(--mono)">${pos+1}</td>
+      <td>${TYPE_LABEL[QUESTIONS[qi].type]}</td>
+      ${stat}
+      <td>${st.flagged?"Marcada":""}</td>
+      <td><button class="linkish" data-go="${pos}">Abrir</button></td>
+    </tr>`;
+  }).join("");
+
+  root.innerHTML = `
+  <section class="score">
+    <span style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700">Resultado do exame de prática</span>
+    <h2>AWS Certified Security – Specialty (SCS-C03)</h2>
+    <div class="bigscore" style="color:${pass?"var(--green)":"var(--red)"}">${pct}%</div>
+    <div>${right} de ${done} questões respondidas corretamente${done<order.length?` · ${order.length-done} sem resposta`:""}</div>
+    <div class="bar ${pass?"":"fail"}"><span style="width:${pct}%"></span><em title="Referência de 75%"></em></div>
+    <div class="barlabel">A marca vertical indica a referência de 75% usada neste simulado. ${pass?"Você ficou acima dela.":"Você ficou abaixo dela."}</div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+      <button class="secondary" id="btnBack">Voltar ao exame</button>
+      <button class="primary" id="btnRestart">Reiniciar simulado</button>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Formato</th><th>Situação</th><th>Revisão</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </section>`;
+
+  root.querySelectorAll("[data-go]").forEach(b=>{
+    b.onclick = () => { cur = Number(b.dataset.go); finished=false; el("bar").hidden=false; ticker=setInterval(tick,1000); renderQuestion(); };
+  });
+  el("btnBack").onclick = () => { finished=false; el("bar").hidden=false; ticker=setInterval(tick,1000); renderQuestion(); };
+  el("btnRestart").onclick = () => {
+    if(confirm("Reiniciar o simulado? Todas as respostas serão apagadas.")){
+      clearInterval(ticker); started=false; renderIntro();
+    }
+  };
+}
+
+function render(){ started ? renderQuestion() : renderIntro(); paintClock(); }
+
+/* ============================ controles ============================ */
+el("btnConfirm").onclick = confirmAnswer;
+el("btnPrev").onclick = () => { if(cur>0){cur--; renderQuestion();} };
+el("btnNext").onclick = () => { if(cur<order.length-1){cur++; renderQuestion();} };
+el("btnNav").onclick = () => {
+  showNav = !showNav;
+  el("btnNav").setAttribute("aria-expanded", String(showNav));
+  el("btnNav").textContent = showNav ? "Fechar revisão" : "Revisar questões";
+  renderQuestion();
+  window.scrollTo({top:0});
+};
+el("btnEnd").onclick = () => {
+  const pend = order.length - answeredCount();
+  if(pend===0 || confirm(`Ainda há ${pend} questão(ões) sem resposta. Finalizar agora?`)) renderResults();
+};
+
+document.addEventListener("keydown", e=>{
+  if(!started || finished) return;
+  if(["SELECT","INPUT","TEXTAREA","BUTTON"].includes(e.target.tagName)) return;
+  const qq = q(), st = s();
+  if(e.key==="Enter"){ e.preventDefault(); confirmAnswer(); return; }
+  if(e.key==="ArrowRight" && cur<order.length-1){ cur++; renderQuestion(); return; }
+  if(e.key==="ArrowLeft" && cur>0){ cur--; renderQuestion(); return; }
+  if(st.locked) return;
+  if(qq.type!=="single" && qq.type!=="multi") return;
+  const i = LETTERS.indexOf(e.key.toUpperCase());
+  if(i>=0 && i<st.optOrder.length){
+    const oi = st.optOrder[i];
+    if(qq.type==="single") st.picked = [oi];
+    else {
+      if(st.picked.includes(oi)) st.picked = st.picked.filter(x=>x!==oi);
+      else if(st.picked.length < qq.pick) st.picked.push(oi);
+    }
+    renderQuestion();
+  }
+});
+
+renderIntro();
+</script>
+</body>
+</html>
