@@ -13,8 +13,7 @@ export function verifyCredentials(email: string, password: string): boolean {
   if (!validEmail || !validPassword) {
     throw new Error("APP_LOGIN_EMAIL and APP_LOGIN_PASSWORD must be set");
   }
-  return (
-    timingSafeStringEqual(email, validEmail) &&
-    timingSafeStringEqual(password, validPassword)
-  );
+  const emailOk = timingSafeStringEqual(email, validEmail);
+  const passwordOk = timingSafeStringEqual(password, validPassword);
+  return emailOk && passwordOk;
 }
