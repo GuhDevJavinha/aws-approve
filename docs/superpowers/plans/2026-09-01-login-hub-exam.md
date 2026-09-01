@@ -2365,6 +2365,7 @@ git commit -m "feat: add exam page shell and configuration screen"
 ### Task 16: Question renderers + exam runner core loop
 
 **Files:**
+- Create: `lib/exam/type-labels.ts`
 - Create: `components/exam/options-question.tsx`
 - Create: `components/exam/order-question.tsx`
 - Create: `components/exam/match-question.tsx`
@@ -2373,9 +2374,9 @@ git commit -m "feat: add exam page shell and configuration screen"
 
 **Interfaces:**
 - Consumes: `isQuestionReady`, `gradeQuestion` (Task 4), `QuestionState`, `Question` variants (Task 2)
-- Produces: `finishAttempt()` (defined inline in `exam-runner.tsx`, extended by Task 18) — the deliverable a full run of the exam question-by-question depends on.
+- Produces: `QUESTION_TYPE_LABEL` (also consumed by Task 18's `exam-results.tsx` — don't let that task redefine it), `finishAttempt()` (defined inline in `exam-runner.tsx`, extended by Task 18) — the deliverable a full run of the exam question-by-question depends on.
 
-No unit tests — this is the interactive core of the app; verified manually in Step 6 by actually taking the exam end to end.
+No unit tests — this is the interactive core of the app; verified manually in Step 8 by actually taking the exam end to end.
 
 - [ ] **Step 1: Add the shadcn Select primitive**
 
@@ -2671,7 +2672,21 @@ function Legend({ swatch, label }: { swatch: string; label: string }) {
 }
 ```
 
-- [ ] **Step 6: Replace the exam runner's running-phase placeholder with the full loop**
+- [ ] **Step 6: Add the shared question-type label map**
+
+`exam-runner.tsx` (this task) and `exam-results.tsx` (Task 18) both need to render a human label for a question's `type`. Define it once so Task 18 imports it instead of redefining it:
+
+```ts
+// lib/exam/type-labels.ts
+export const QUESTION_TYPE_LABEL: Record<string, string> = {
+  single: "Múltipla escolha",
+  multi: "Resposta múltipla",
+  order: "Ordenação",
+  match: "Correspondência",
+};
+```
+
+- [ ] **Step 7: Replace the exam runner's running-phase placeholder with the full loop**
 
 ```tsx
 // components/exam/exam-runner.tsx
@@ -2683,6 +2698,7 @@ import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
 import { buildAttempt } from "@/lib/exam/build-attempt";
 import { gradeQuestion, isQuestionReady } from "@/lib/exam/grading";
+import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
 import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel } from "./exam-nav-panel";
 import { MatchQuestion } from "./match-question";
@@ -2690,13 +2706,6 @@ import { OptionsQuestion } from "./options-question";
 import { OrderQuestion } from "./order-question";
 
 type Phase = "intro" | "running" | "results";
-
-const TYPE_LABEL: Record<string, string> = {
-  single: "Múltipla escolha",
-  multi: "Resposta múltipla",
-  order: "Ordenação",
-  match: "Correspondência",
-};
 
 export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [phase, setPhase] = useState<Phase>("intro");
@@ -2786,7 +2795,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
               Questão {attempt.currentIndex + 1} de {attempt.order.length}
             </span>
             <span className="rounded-sm border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
-              {TYPE_LABEL[question.type]}
+              {QUESTION_TYPE_LABEL[question.type]}
             </span>
             <Button
               type="button"
@@ -2891,14 +2900,14 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 }
 ```
 
-- [ ] **Step 7: Verify manually with the dev server**
+- [ ] **Step 8: Verify manually with the dev server**
 
 Run: `bun run dev`, go through `/exam/security-especialist`. Confirm: each of the 4 question types (`single`/`multi`/`order`/`match` — scroll through a few questions to hit all of them) renders and can be answered; "Confirmar resposta" is disabled until the question is ready (1 pick for single, exactly `pick` for multi, every slot filled for order/match); confirming locks the question and — only when "Feedback imediato" is on — shows the correct/incorrect coloring and banner; "Marcar para revisão" toggles and shows in the nav panel as an orange dot; "Revisar questões" opens the grid and clicking a cell jumps to that question; "Finalizar" with unanswered questions prompts a native confirm dialog. With "Feedback imediato" off, confirm that no coloring appears even though you can still move on to the next question.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add components/exam/options-question.tsx components/exam/order-question.tsx components/exam/match-question.tsx components/exam/exam-nav-panel.tsx components/exam/exam-runner.tsx package.json bun.lockb
+git add lib/exam/type-labels.ts components/exam/options-question.tsx components/exam/order-question.tsx components/exam/match-question.tsx components/exam/exam-nav-panel.tsx components/exam/exam-runner.tsx package.json bun.lockb
 git commit -m "feat: add question renderers and the exam interaction loop"
 ```
 
@@ -2960,7 +2969,7 @@ In the question card header (the `<div className="flex items-center gap-3 border
     Questão {attempt.currentIndex + 1} de {attempt.order.length}
   </span>
   <span className="rounded-sm border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
-    {TYPE_LABEL[question.type]}
+    {QUESTION_TYPE_LABEL[question.type]}
   </span>
   {attempt.config.timerEnabled ? (
     <span
@@ -3033,7 +3042,7 @@ git commit -m "feat: add exam timer, pause, and auto-submit on timeout"
 - Modify: `components/exam/exam-runner.tsx`
 
 **Interfaces:**
-- Consumes: `saveCompletedResult`, `clearInProgressAttempt` (Task 6), `getPassingScore` (Task 5)
+- Consumes: `saveCompletedResult`, `clearInProgressAttempt` (Task 6), `getPassingScore` (Task 5), `QUESTION_TYPE_LABEL` (Task 16 — import it, do not redefine it here)
 - Produces: `ExamResults` component
 
 No unit test — presentational + wiring, verified manually.
@@ -3048,14 +3057,8 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { getPassingScore } from "@/lib/exam/constants";
+import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
 import type { Attempt, Simulado } from "@/types/simulado";
-
-const TYPE_LABEL: Record<string, string> = {
-  single: "Múltipla escolha",
-  multi: "Resposta múltipla",
-  order: "Ordenação",
-  match: "Correspondência",
-};
 
 export function ExamResults({
   simulado,
@@ -3123,7 +3126,7 @@ export function ExamResults({
                 return (
                   <tr key={question.id} className="border-b border-border/60">
                     <td className="py-2 font-mono">{position + 1}</td>
-                    <td className="py-2">{TYPE_LABEL[question.type]}</td>
+                    <td className="py-2">{QUESTION_TYPE_LABEL[question.type]}</td>
                     <td
                       className={
                         state.correct === true
