@@ -9,7 +9,12 @@ import { formatTime } from "@/lib/format-time";
 import { gradeQuestion, isQuestionReady } from "@/lib/exam/grading";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
 import { getPassingScore } from "@/lib/exam/constants";
-import { clearInProgressAttempt, saveCompletedResult } from "@/lib/storage/attempt-storage";
+import {
+  clearInProgressAttempt,
+  loadInProgressAttempt,
+  saveCompletedResult,
+  saveInProgressAttempt,
+} from "@/lib/storage/attempt-storage";
 import { cn } from "@/lib/utils";
 import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel } from "./exam-nav-panel";
@@ -25,6 +30,21 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [showNav, setShowNav] = useState(false);
   const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const saved = loadInProgressAttempt(simulado.slug);
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAttempt(saved);
+      setPhase("running");
+    }
+  }, [simulado.slug]);
+
+  useEffect(() => {
+    if (phase === "running" && attempt) {
+      saveInProgressAttempt(attempt);
+    }
+  }, [phase, attempt]);
 
   const finishAttemptRef = useRef(finishAttempt);
   useEffect(() => {
