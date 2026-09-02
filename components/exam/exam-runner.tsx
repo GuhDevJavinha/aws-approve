@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
@@ -26,10 +26,15 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [showNav, setShowNav] = useState(false);
   const [paused, setPaused] = useState(false);
 
+  const finishAttemptRef = useRef(finishAttempt);
+  useEffect(() => {
+    finishAttemptRef.current = finishAttempt;
+  });
+
   useEffect(() => {
     if (phase !== "running" || !attempt || !attempt.config.timerEnabled || paused) return;
     if (attempt.secondsRemaining <= 0) {
-      finishAttempt();
+      finishAttemptRef.current();
       return;
     }
     const id = setInterval(() => {
