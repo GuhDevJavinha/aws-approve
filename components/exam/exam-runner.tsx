@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
@@ -34,9 +34,10 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   useEffect(() => {
     const saved = loadInProgressAttempt(simulado.slug);
     if (saved) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAttempt(saved);
-      setPhase("running");
+      startTransition(() => {
+        setAttempt(saved);
+        setPhase("running");
+      });
     }
   }, [simulado.slug]);
 
