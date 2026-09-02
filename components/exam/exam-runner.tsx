@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
 import { buildAttempt } from "@/lib/exam/build-attempt";
+import { formatTime } from "@/lib/format-time";
 import { gradeQuestion, isQuestionReady } from "@/lib/exam/grading";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
+import { cn } from "@/lib/utils";
 import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel } from "./exam-nav-panel";
 import { MatchQuestion } from "./match-question";
@@ -19,6 +21,19 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [showNav, setShowNav] = useState(false);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (phase !== "running" || !attempt || !attempt.config.timerEnabled || paused) return;
+    if (attempt.secondsRemaining <= 0) {
+      finishAttempt();
+      return;
+    }
+    const id = setInterval(() => {
+      setAttempt((prev) => (prev ? { ...prev, secondsRemaining: prev.secondsRemaining - 1 } : prev));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [phase, attempt, paused]);
 
   function handleStart(config: ExamConfig) {
     setAttempt(buildAttempt(simulado, config));
@@ -27,6 +42,22 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 
   if (phase === "intro" || !attempt) {
     return <ExamIntro simulado={simulado} onStart={handleStart} />;
+  }
+
+  if (paused) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-10 pb-28">
+        <div className="rounded-sm border border-border bg-card p-10 text-center">
+          <p className="text-lg font-semibold text-foreground">Prova pausada</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Suas respostas estão salvas. Continue quando estiver pronto.
+          </p>
+          <Button type="button" className="mt-5" onClick={() => setPaused(false)}>
+            Continuar
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   if (phase === "results") {
@@ -105,6 +136,21 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
             <span className="rounded-sm border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
               {QUESTION_TYPE_LABEL[question.type]}
             </span>
+            {attempt.config.timerEnabled ? (
+              <span
+                className={cn(
+                  "font-mono text-xs font-bold",
+                  attempt.secondsRemaining <= 300 ? "text-destructive" : "text-muted-foreground"
+                )}
+              >
+                {formatTime(attempt.secondsRemaining)}
+              </span>
+            ) : null}
+            {!attempt.config.timerEnabled ? (
+              <Button type="button" variant="ghost" size="sm" onClick={() => setPaused(true)}>
+                Pausar
+              </Button>
+            ) : null}
             <Button
               type="button"
               variant="ghost"
