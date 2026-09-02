@@ -48,7 +48,7 @@ export function OptionsQuestion({
                 disabled={state.locked}
                 onClick={() => toggle(optionIndex)}
                 className={cn(
-                  "flex w-full items-start gap-3 rounded-sm border border-border bg-card px-4 py-3 text-left transition-colors",
+                  "flex w-full items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left transition-colors",
                   !state.locked && "cursor-pointer hover:bg-muted",
                   isSelected && !revealAnswer && "border-ring bg-accent",
                   revealAnswer && isCorrectOption && "border-success bg-success/10",
@@ -59,7 +59,7 @@ export function OptionsQuestion({
                 <span className="flex-1">
                   {option.text ? <span>{option.text}</span> : null}
                   {option.code ? (
-                    <pre className="mt-2 overflow-x-auto rounded-sm bg-muted p-3 font-mono text-xs">
+                    <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 font-mono text-xs">
                       {option.code}
                     </pre>
                   ) : null}

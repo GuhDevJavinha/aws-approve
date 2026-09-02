@@ -42,7 +42,7 @@ export function ExamIntro({
       transition={{ duration: 0.25 }}
       className="max-w-2xl mx-auto px-4 py-10"
     >
-      <Card className="rounded-sm">
+      <Card>
         <CardHeader>
           <p className="text-[10px] tracking-[.16em] uppercase text-muted-foreground font-bold">
             {simulado.examCode} · Exame de prática

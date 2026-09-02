@@ -15,7 +15,7 @@ export function ExamNavPanel({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="mb-4 rounded-sm border border-border bg-card p-4">
+    <div className="mb-4 rounded-lg border border-border bg-card p-4">
       <div className="mb-3 flex flex-wrap gap-3 text-xs text-muted-foreground">
         <Legend swatch="border border-border bg-card" label="Não respondida" />
         <Legend swatch="border border-success bg-success/10" label="Correta" />
@@ -29,7 +29,7 @@ export function ExamNavPanel({
             type="button"
             onClick={() => onSelect(index)}
             className={cn(
-              "relative rounded-sm border border-border bg-card py-1.5 font-mono text-xs font-bold text-foreground",
+              "relative rounded-lg border border-border bg-card py-1.5 font-mono text-xs font-bold text-foreground",
               revealAnswers && state.correct === true && "border-success bg-success/10",
               revealAnswers && state.correct === false && "border-destructive bg-destructive/10",
               index === currentIndex && "outline outline-2 outline-foreground"

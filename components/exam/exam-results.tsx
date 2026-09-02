@@ -25,7 +25,7 @@ export function ExamResults({
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <div className="rounded-sm border border-border bg-card p-7">
+      <div className="rounded-lg border border-border bg-card p-7">
         <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
           Resultado do exame de prática
         </p>

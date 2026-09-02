@@ -76,7 +76,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   if (paused) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-10 pb-28">
-        <div className="rounded-sm border border-border bg-card p-10 text-center">
+        <div className="rounded-lg border border-border bg-card p-10 text-center">
           <p className="text-lg font-semibold text-foreground">Prova pausada</p>
           <p className="mt-1 text-sm text-muted-foreground">
             Suas respostas estão salvas. Continue quando estiver pronto.
@@ -183,13 +183,13 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -12 }}
           transition={{ duration: 0.2 }}
-          className="rounded-sm border border-border bg-card"
+          className="rounded-lg border border-border bg-card"
         >
           <div className="flex items-center gap-3 border-b border-border px-5 py-3">
             <span className="font-mono text-xs font-bold text-muted-foreground">
               Questão {attempt.currentIndex + 1} de {attempt.order.length}
             </span>
-            <span className="rounded-sm border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
+            <span className="rounded-lg border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
               {QUESTION_TYPE_LABEL[question.type]}
             </span>
             {attempt.config.timerEnabled ? (
@@ -221,7 +221,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
           <div className="p-5">
             <p className="whitespace-pre-wrap text-foreground">{question.stem}</p>
             {question.code ? (
-              <pre className="mt-3 overflow-x-auto rounded-sm bg-muted p-3 font-mono text-xs">{question.code}</pre>
+              <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 font-mono text-xs">{question.code}</pre>
             ) : null}
             {question.ask ? <p className="mt-4 font-semibold text-foreground">{question.ask}</p> : null}
 
@@ -256,8 +256,8 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
                 animate={{ opacity: 1, y: 0 }}
                 className={
                   state.correct
-                    ? "mt-4 rounded-sm border border-success bg-success/10 px-4 py-2 text-sm font-bold text-success"
-                    : "mt-4 rounded-sm border border-destructive bg-destructive/10 px-4 py-2 text-sm font-bold text-destructive"
+                    ? "mt-4 rounded-lg border border-success bg-success/10 px-4 py-2 text-sm font-bold text-success"
+                    : "mt-4 rounded-lg border border-destructive bg-destructive/10 px-4 py-2 text-sm font-bold text-destructive"
                 }
               >
                 {state.correct ? "Correto" : "Incorreto"}

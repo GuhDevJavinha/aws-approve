@@ -24,7 +24,7 @@ export function SimuladoCard({ simulado, index }: { simulado: Simulado; index: n
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: index * 0.05 }}
     >
-      <Card className="rounded-sm h-full flex flex-col">
+      <Card className="h-full flex flex-col">
         <CardHeader>
           <p className="text-[10px] tracking-[.16em] uppercase text-muted-foreground font-bold">
             {simulado.examCode}

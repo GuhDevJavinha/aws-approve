@@ -30,7 +30,7 @@ export function MatchQuestion({
           <div
             key={slotIndex}
             className={cn(
-              "rounded-sm border border-border bg-card p-3",
+              "rounded-lg border border-border bg-card p-3",
               revealAnswer && (isCorrect ? "border-success bg-success/10" : "border-destructive bg-destructive/10")
             )}
           >
