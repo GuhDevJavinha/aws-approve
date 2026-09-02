@@ -8,9 +8,12 @@ import { buildAttempt } from "@/lib/exam/build-attempt";
 import { formatTime } from "@/lib/format-time";
 import { gradeQuestion, isQuestionReady } from "@/lib/exam/grading";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
+import { getPassingScore } from "@/lib/exam/constants";
+import { clearInProgressAttempt, saveCompletedResult } from "@/lib/storage/attempt-storage";
 import { cn } from "@/lib/utils";
 import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel } from "./exam-nav-panel";
+import { ExamResults } from "./exam-results";
 import { MatchQuestion } from "./match-question";
 import { OptionsQuestion } from "./options-question";
 import { OrderQuestion } from "./order-question";
@@ -61,7 +64,20 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   }
 
   if (phase === "results") {
-    return <div className="max-w-3xl mx-auto px-4 py-10">Resultado — chega em tarefa futura.</div>;
+    return (
+      <ExamResults
+        simulado={simulado}
+        attempt={attempt}
+        onReviewQuestion={(index) => {
+          setAttempt((prev) => (prev ? { ...prev, currentIndex: index } : prev));
+          setPhase("running");
+        }}
+        onRestart={() => {
+          setAttempt(null);
+          setPhase("intro");
+        }}
+      />
+    );
   }
 
   const question = simulado.questions[attempt.order[attempt.currentIndex]!]!;
@@ -85,6 +101,20 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   }
 
   function finishAttempt() {
+    if (!attempt) return;
+    const answered = attempt.states.filter((s) => s.locked).length;
+    const correct = attempt.states.filter((s) => s.correct === true).length;
+    const scorePercent = answered === 0 ? 0 : Math.round((correct / answered) * 100);
+    saveCompletedResult({
+      simuladoSlug: simulado.slug,
+      completedAt: new Date().toISOString(),
+      scorePercent,
+      correctCount: correct,
+      answeredCount: answered,
+      totalCount: attempt.order.length,
+      passed: scorePercent >= getPassingScore(simulado),
+    });
+    clearInProgressAttempt(simulado.slug);
     setPhase("results");
   }
 
