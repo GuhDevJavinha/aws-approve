@@ -118,8 +118,12 @@ describe("simuladosForProvider", () => {
     }
   });
 
-  it("returns the two AWS simulados that exist today", () => {
-    expect(simuladosForProvider("aws").map((c) => c.code)).toEqual(["SAP-C02", "SCS-C03"]);
+  it("returns the three AWS simulados that exist today", () => {
+    expect(simuladosForProvider("aws").map((c) => c.code)).toEqual([
+      "DOP-C02",
+      "SAP-C02",
+      "SCS-C03",
+    ]);
   });
 });
 

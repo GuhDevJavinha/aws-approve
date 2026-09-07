@@ -88,6 +88,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified DevOps Engineer – Professional",
     tier: "professional",
     studyUrl: `${EXAM_GUIDE}/devops-engineer-professional-02.html`,
+    simuladoSlug: "devops-engineer-professional",
   },
   {
     id: "aws-sap-c02",
