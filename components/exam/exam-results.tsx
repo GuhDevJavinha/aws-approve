@@ -47,8 +47,8 @@ export function ExamResults({
         </p>
 
         <div className="mt-4 flex gap-3">
-          <Link href="/hub" className={buttonVariants({ variant: "secondary" })}>
-            Voltar ao hub
+          <Link href="/simulados" className={buttonVariants({ variant: "secondary" })}>
+            Voltar aos simulados
           </Link>
           <Button type="button" onClick={onRestart}>
             Reiniciar simulado

@@ -28,7 +28,7 @@ export async function login(_prevState: LoginState, formData: FormData): Promise
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  redirect("/hub");
+  redirect("/certificacoes");
 }
 
 export async function logout(): Promise<void> {

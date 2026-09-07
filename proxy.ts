@@ -16,5 +16,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/hub/:path*", "/exam/:path*"],
+  matcher: [
+    "/certificacoes/:path*",
+    "/simulados/:path*",
+    "/hub/:path*",
+    "/exam/:path*",
+  ],
 };
