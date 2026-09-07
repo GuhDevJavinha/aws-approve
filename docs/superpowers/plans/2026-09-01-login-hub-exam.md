@@ -3303,17 +3303,12 @@ git commit -m "feat: resume an in-progress attempt after a refresh"
 
 **Files:** none new — this is verification only.
 
-- [ ] **Step 1: Run the full test suite**
-
-Run: `bun run test`
-Expected: every test from Tasks 1–13 passes.
-
-- [ ] **Step 2: Type-check and lint**
+- [ ] **Step 1: Type-check and lint**
 
 Run: `bunx tsc --noEmit && bun run lint`
-Expected: no errors.
+Expected: no errors, no warnings (this codebase has been kept at 0 warnings since Task 19 — don't let this step reintroduce any). Note: this project no longer has an automated test suite (all `.test.ts` files were removed per explicit user direction after Task 17) — do not run or reference `bun run test`.
 
-- [ ] **Step 3: Full manual walkthrough with the dev server**
+- [ ] **Step 2: Full manual walkthrough with the dev server**
 
 Run: `bun run dev` and walk the entire flow fresh (clear cookies and `localStorage` first):
 
@@ -3333,11 +3328,11 @@ Run: `bun run dev` and walk the entire flow fresh (clear cookies and `localStora
 14. Log out — confirm it redirects to `/login` and `/hub` is protected again (visiting it directly redirects back to `/login`).
 15. Toggle dark mode at least once during the walkthrough and confirm every screen stays legible (contrast, borders, focus states).
 
-- [ ] **Step 4: Fix anything the walkthrough surfaces**
+- [ ] **Step 3: Fix anything the walkthrough surfaces**
 
 If any step fails, fix it in the relevant file from the task that introduced it — do not add new abstractions here, just correct the defect.
 
-- [ ] **Step 5: Final commit**
+- [ ] **Step 4: Final commit**
 
 ```bash
 git add -A
