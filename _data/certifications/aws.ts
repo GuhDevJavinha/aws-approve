@@ -56,6 +56,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified Developer – Associate",
     tier: "associate",
     studyUrl: `${EXAM_GUIDE}/developer-associate-02.html`,
+    simuladoSlug: "developer-associate",
   },
   {
     id: "aws-mla-c02",
