@@ -81,6 +81,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified Generative AI Developer – Professional",
     tier: "professional",
     studyUrl: `${EXAM_GUIDE}/ai-professional-01.html`,
+    simuladoSlug: "generative-ai-developer-professional",
   },
   {
     id: "aws-dop-c02",
