@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SOURCE_PATH = resolve(process.cwd(), "simulado-dva-c02.txt");
-const OUTPUT_PATH = resolve(process.cwd(), "_data/simulado_developer_associate.ts");
+const OUTPUT_PATH = resolve(process.cwd(), "app/_data/simulado_developer_associate.ts");
 const EXAM_CODE = "DVA-C02";
 
 interface OutQuestion {

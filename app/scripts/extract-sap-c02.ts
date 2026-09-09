@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 const SOURCE_PATH = resolve(process.cwd(), "public/Professional SAP-C02 (2).md");
 const OUTPUT_PATH = resolve(
   process.cwd(),
-  "_data/simulado_solutions_architect_professional.ts"
+  "app/_data/simulado_solutions_architect_professional.ts"
 );
 const EXAM_CODE = "SAP-C02";
 const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];

@@ -82,5 +82,5 @@ export const simuladoSecurityEspecialista: Simulado = {
 };
 `;
 
-writeFileSync(resolve(process.cwd(), "_data/simulado_security_especialist.ts"), fileContent, "utf8");
+writeFileSync(resolve(process.cwd(), "app/_data/simulado_security_especialist.ts"), fileContent, "utf8");
 console.log(`Wrote ${questions.length} questions to _data/simulado_security_especialist.ts`);

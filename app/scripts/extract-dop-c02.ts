@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SOURCE_PATH = resolve(process.cwd(), "simulado-dop-c02.txt");
-const OUTPUT_PATH = resolve(process.cwd(), "_data/simulado_devops_engineer_professional.ts");
+const OUTPUT_PATH = resolve(process.cwd(), "app/_data/simulado_devops_engineer_professional.ts");
 const EXAM_CODE = "DOP-C02";
 
 interface OutQuestion {
