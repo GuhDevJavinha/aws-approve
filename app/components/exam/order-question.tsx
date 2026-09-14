@@ -41,8 +41,14 @@ export function OrderQuestion({
               value={value === null ? "" : String(value)}
               onValueChange={(next) => setSlot(slotIndex, next ?? "")}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecionar…" />
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecionar…">
+                  {(current: string | null) => {
+                    if (current === null || current === "") return "Selecionar…";
+                    const poolIndex = Number(current);
+                    return Number.isNaN(poolIndex) ? "Selecionar…" : question.pool[poolIndex];
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {question.pool.map((item, poolIndex) => (
