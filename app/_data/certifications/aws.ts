@@ -49,6 +49,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified Data Engineer – Associate",
     tier: "associate",
     studyUrl: `${EXAM_GUIDE}/data-engineer-associate-01.html`,
+    simuladoSlug: "data-engineer-associate",
   },
   {
     id: "aws-dva-c02",

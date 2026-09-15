@@ -118,9 +118,10 @@ describe("simuladosForProvider", () => {
     }
   });
 
-  it("returns the six AWS simulados that exist today", () => {
+  it("returns the seven AWS simulados that exist today", () => {
     expect(simuladosForProvider("aws").map((c) => c.code)).toEqual([
       "SOA-C03",
+      "DEA-C01",
       "DVA-C02",
       "DOP-C02",
       "AIP-C01",
