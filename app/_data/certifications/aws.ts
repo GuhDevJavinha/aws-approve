@@ -40,6 +40,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified CloudOps Engineer – Associate",
     tier: "associate",
     studyUrl: `${EXAM_GUIDE}/sysops-administrator-associate-03.html`,
+    simuladoSlug: "cloudops-engineer-associate",
   },
   {
     id: "aws-dea-c01",
