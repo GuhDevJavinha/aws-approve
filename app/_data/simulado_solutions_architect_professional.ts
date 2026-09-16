@@ -141,8 +141,10 @@ export const simuladoSolutionsArchitectProfessional: Simulado = {
   },
   {
     "id": "SAP-C02-6",
-    "type": "single",
-    "stem": "Uma empresa varejista precisa fornecer uma série de arquivos de dados para outra empresa, que é sua parceira de negócios. Esses arquivos são salvos em um bucket do Amazon S3 na Conta A, que pertence à empresa varejista. A empresa parceira de negócios deseja que um de seus usuários do IAM, User_DataProcessor, acesse os arquivos de sua própria conta da AWS (Conta B). Qual combinação de etapas as empresas devem seguir para que User_DataProcessor possa acessar o bucket do S3 com sucesso?",
+    "type": "multi",
+    "pick": 2,
+    "stem": "Uma empresa varejista precisa fornecer uma série de arquivos de dados para outra empresa, que é sua parceira de negócios. Esses arquivos são salvos em um bucket do Amazon S3 na Conta A, que pertence à empresa varejista. A empresa parceira de negócios deseja que um de seus usuários do IAM, User_DataProcessor, acesse os arquivos de sua própria conta da AWS (Conta B).",
+    "ask": "Qual combinação de etapas as empresas devem seguir para que User_DataProcessor possa acessar o bucket do S3 com sucesso? (Escolha duas.)",
     "options": [
       {
         "id": "A",
@@ -150,23 +152,28 @@ export const simuladoSolutionsArchitectProfessional: Simulado = {
       },
       {
         "id": "B",
-        "text": "Na Conta A, defina a política de bucket do S3 como o seguinte:"
+        "text": "Na Conta A, defina a política de bucket do S3 como o seguinte:",
+        "code": "{\n    \"Effect\": \"Allow\",\n    \"Action\": [\n        \"s3:GetObject\",\n        \"s3:ListBucket\"\n    ],\n    \"Resource\": \"arn:aws:s3:::AccountABucketName/*\"\n}"
       },
       {
         "id": "C",
-        "text": "Na Conta A, defina a política de bucket do S3 como o seguinte:"
+        "text": "Na Conta A, defina a política de bucket do S3 como o seguinte:",
+        "code": "{\n    \"Effect\": \"Allow\",\n    \"Principal\": {\n        \"AWS\": \"arn:aws:iam::AccountB:user/User_DataProcessor\"\n    },\n    \"Action\": [\n        \"s3:GetObject\",\n        \"s3:ListBucket\"\n    ],\n    \"Resource\": [\n        \"arn:aws:s3:::AccountABucketName/*\"\n    ]\n}"
       },
       {
         "id": "D",
-        "text": "Na Conta B, defina as permissões do User_DataProcessor para o seguinte:"
+        "text": "Na Conta B, defina as permissões do User_DataProcessor para o seguinte:",
+        "code": "{\n    \"Effect\": \"Allow\",\n    \"Action\": [\n        \"s3:GetObject\",\n        \"s3:ListBucket\"\n    ],\n    \"Resource\": \"arn:aws:s3:::AccountABucketName/*\"\n}"
       },
       {
         "id": "E",
-        "text": "Na Conta B, defina as permissões do User_DataProcessor para o seguinte:"
+        "text": "Na Conta B, defina as permissões do User_DataProcessor para o seguinte:",
+        "code": "{\n    \"Effect\": \"Allow\",\n    \"Principal\": {\n        \"AWS\": \"arn:aws:iam::AccountB:user/User_DataProcessor\"\n    },\n    \"Action\": [\n        \"s3:GetObject\",\n        \"s3:ListBucket\"\n    ],\n    \"Resource\": [\n        \"arn:aws:s3:::AccountABucketName/*\"\n    ]\n}"
       }
     ],
     "answer": [
-      "C"
+      "C",
+      "D"
     ]
   },
   {
