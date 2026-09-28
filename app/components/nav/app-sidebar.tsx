@@ -24,10 +24,15 @@ export function AppSidebar() {
           <span className="text-base font-bold tracking-tight text-sidebar-foreground">
             AWS Approve
           </span>
-          <span className="text-[10px] uppercase tracking-[.16em] font-bold text-sidebar-foreground/60">
-            by BSP Prompt
-          </span>
         </Link>
+        <a
+          href="https://www.guhdev.me/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] uppercase tracking-[.16em] font-bold text-sidebar-foreground/60 hover:text-sidebar-foreground"
+        >
+          by Gustavo Ribeiro
+        </a>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
