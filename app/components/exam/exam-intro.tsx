@@ -5,13 +5,15 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { countMatchAndOrderQuestions } from "@/lib/exam/build-attempt";
 import { getPassingScore } from "@/lib/exam/constants";
 import type { ExamConfig, Simulado } from "@/types/simulado";
 
 const DEFAULT_CONFIG: ExamConfig = {
   questionSource: "all",
   timerEnabled: false,
-  immediateFeedback: true,
+  immediateFeedback: false,
+  excludeMatchAndOrder: false,
   shuffleQuestions: false,
   shuffleOptions: false,
 };
@@ -25,14 +27,19 @@ export function ExamIntro({
 }) {
   const [config, setConfig] = useState<ExamConfig>(DEFAULT_CONFIG);
 
+  const matchAndOrderCount = countMatchAndOrderQuestions(simulado.questions);
+  const availableCount = simulado.questions.length - (config.excludeMatchAndOrder ? matchAndOrderCount : 0);
+  const officialCount = Math.min(simulado.examQuestionCount, availableCount);
+
   function applyRealExamPreset() {
-    setConfig({
+    setConfig((c) => ({
+      ...c,
       questionSource: "official",
       timerEnabled: true,
       immediateFeedback: false,
       shuffleQuestions: true,
       shuffleOptions: true,
-    });
+    }));
   }
 
   return (
@@ -40,7 +47,7 @@ export function ExamIntro({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="max-w-2xl mx-auto px-4 py-10"
+      className="w-full max-w-2xl mx-auto px-4 py-10"
     >
       <Card>
         <CardHeader>
@@ -61,12 +68,20 @@ export function ExamIntro({
 
           <ToggleRow
             label="Quantidade oficial de questões"
-            description={`Usa ${simulado.examQuestionCount} de ${simulado.questions.length} questões, sorteadas.`}
+            description={`Usa ${officialCount} de ${availableCount} questões, sorteadas.`}
             checked={config.questionSource === "official"}
             onCheckedChange={(checked) =>
               setConfig((c) => ({ ...c, questionSource: checked ? "official" : "all" }))
             }
           />
+          {matchAndOrderCount > 0 ? (
+            <ToggleRow
+              label="Sem questões de correspondência/ordenação"
+              description={`Remove ${matchAndOrderCount} ${matchAndOrderCount === 1 ? "questão" : "questões"} de correspondência/ordenação.`}
+              checked={config.excludeMatchAndOrder}
+              onCheckedChange={(checked) => setConfig((c) => ({ ...c, excludeMatchAndOrder: checked }))}
+            />
+          ) : null}
           <ToggleRow
             label="Cronômetro"
             description="Ao zerar, o simulado é finalizado automaticamente."
@@ -75,7 +90,7 @@ export function ExamIntro({
           />
           <ToggleRow
             label="Feedback imediato"
-            description="Mostra certo/errado ao confirmar cada resposta."
+            description="Confirme cada resposta para ver o gabarito na hora. A questão fica travada."
             checked={config.immediateFeedback}
             onCheckedChange={(checked) => setConfig((c) => ({ ...c, immediateFeedback: checked }))}
           />

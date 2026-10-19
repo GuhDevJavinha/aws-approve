@@ -5,26 +5,29 @@ import { motion } from "motion/react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { getPassingScore } from "@/lib/exam/constants";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
+import { formatDuration } from "@/lib/format-time";
 import type { Attempt, Simulado } from "@/types/simulado";
 
 export function ExamResults({
   simulado,
   attempt,
+  elapsedSeconds,
   onReviewQuestion,
   onRestart,
 }: {
   simulado: Simulado;
   attempt: Attempt;
+  elapsedSeconds: number;
   onReviewQuestion: (index: number) => void;
   onRestart: () => void;
 }) {
-  const answeredCount = attempt.states.filter((s) => s.locked).length;
+  const answeredCount = attempt.states.filter((s) => s.correct !== null).length;
   const correctCount = attempt.states.filter((s) => s.correct === true).length;
   const scorePercent = answeredCount === 0 ? 0 : Math.round((correctCount / answeredCount) * 100);
   const passed = scorePercent >= getPassingScore(simulado);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
+    <div className="w-full max-w-3xl mx-auto px-4 py-10">
       <div className="rounded-lg border border-border bg-card p-7">
         <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
           Resultado do exame de prática
@@ -44,15 +47,20 @@ export function ExamResults({
           {answeredCount < attempt.order.length
             ? ` · ${attempt.order.length - answeredCount} sem resposta`
             : ""}
+          {" · "}
+          Tempo: {formatDuration(elapsedSeconds)}
         </p>
 
-        <div className="mt-4 flex gap-3">
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Button type="button" onClick={() => onReviewQuestion(0)}>
+            Revisar respostas
+          </Button>
+          <Button type="button" variant="outline" onClick={onRestart}>
+            Reiniciar simulado
+          </Button>
           <Link href="/simulados" className={buttonVariants({ variant: "secondary" })}>
             Voltar aos simulados
           </Link>
-          <Button type="button" onClick={onRestart}>
-            Reiniciar simulado
-          </Button>
         </div>
 
         <div className="mt-8 overflow-x-auto">
@@ -93,6 +101,7 @@ export function ExamResults({
                     <td className="py-2">
                       <button
                         type="button"
+                        aria-label={`Abrir questão ${position + 1} na revisão`}
                         className="text-accent-foreground underline"
                         onClick={() => onReviewQuestion(position)}
                       >

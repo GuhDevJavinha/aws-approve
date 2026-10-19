@@ -64,13 +64,14 @@ export interface ExamConfig {
   questionSource: "all" | "official";
   timerEnabled: boolean;
   immediateFeedback: boolean;
+  excludeMatchAndOrder: boolean;
   shuffleQuestions: boolean;
   shuffleOptions: boolean;
 }
 
 export interface QuestionState {
-  locked: boolean;
   correct: boolean | null;
+  locked: boolean;
   flagged: boolean;
   picked: number[];
   optOrder: number[];
@@ -95,4 +96,5 @@ export interface CompletedResult {
   answeredCount: number;
   totalCount: number;
   passed: boolean;
+  elapsedSeconds: number;
 }

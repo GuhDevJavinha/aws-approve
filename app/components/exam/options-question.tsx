@@ -17,7 +17,7 @@ export function OptionsQuestion({
   onChange: (picked: number[]) => void;
 }) {
   function toggle(optionIndex: number) {
-    if (state.locked) return;
+    if (revealAnswer) return;
     if (question.type === "single") {
       onChange([optionIndex]);
       return;
@@ -45,11 +45,12 @@ export function OptionsQuestion({
             <li key={option.id}>
               <button
                 type="button"
-                disabled={state.locked}
+                disabled={revealAnswer}
+                aria-pressed={isSelected}
                 onClick={() => toggle(optionIndex)}
                 className={cn(
                   "flex w-full items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left transition-colors",
-                  !state.locked && "cursor-pointer hover:bg-muted",
+                  !revealAnswer && "cursor-pointer hover:bg-muted",
                   isSelected && !revealAnswer && "border-ring bg-accent",
                   revealAnswer && isCorrectOption && "border-success bg-success/10",
                   revealAnswer && isSelected && !isCorrectOption && "border-destructive bg-destructive/10"
@@ -64,11 +65,15 @@ export function OptionsQuestion({
                     </pre>
                   ) : null}
                 </span>
-                {revealAnswer && isCorrectOption ? (
-                  <span className="text-xs font-bold uppercase text-success">Correta</span>
-                ) : null}
-                {revealAnswer && isSelected && !isCorrectOption ? (
-                  <span className="text-xs font-bold uppercase text-destructive">Sua escolha</span>
+                {revealAnswer && (isCorrectOption || isSelected) ? (
+                  <span className="flex flex-col items-end gap-1 text-xs font-bold">
+                    {isCorrectOption ? <span className="text-success">Correta</span> : null}
+                    {isSelected ? (
+                      <span className={isCorrectOption ? "text-muted-foreground" : "text-destructive"}>
+                        Sua escolha
+                      </span>
+                    ) : null}
+                  </span>
                 ) : null}
               </button>
             </li>

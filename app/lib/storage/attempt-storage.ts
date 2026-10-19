@@ -11,10 +11,22 @@ export function loadInProgressAttempt(slug: string): Attempt | null {
   const raw = localStorage.getItem(inProgressKey(slug));
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as Attempt;
+    return withNewFieldDefaults(JSON.parse(raw) as Attempt);
   } catch {
     return null;
   }
+}
+
+function withNewFieldDefaults(attempt: Attempt): Attempt {
+  return {
+    ...attempt,
+    config: {
+      ...attempt.config,
+      immediateFeedback: attempt.config.immediateFeedback ?? false,
+      excludeMatchAndOrder: attempt.config.excludeMatchAndOrder ?? false,
+    },
+    states: attempt.states.map((state) => ({ ...state, locked: state.locked ?? false })),
+  };
 }
 
 export function clearInProgressAttempt(slug: string): void {
