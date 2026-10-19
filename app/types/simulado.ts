@@ -63,12 +63,15 @@ export interface Simulado {
 export interface ExamConfig {
   questionSource: "all" | "official";
   timerEnabled: boolean;
+  immediateFeedback: boolean;
+  excludeMatchAndOrder: boolean;
   shuffleQuestions: boolean;
   shuffleOptions: boolean;
 }
 
 export interface QuestionState {
   correct: boolean | null;
+  locked: boolean;
   flagged: boolean;
   picked: number[];
   optOrder: number[];

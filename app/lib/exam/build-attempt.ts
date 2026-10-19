@@ -6,11 +6,22 @@ export function selectQuestions(allQuestions: readonly Question[], count: number
   return shuffle(allQuestions).slice(0, count);
 }
 
+function isMatchOrOrder(question: Question): boolean {
+  return question.type === "match" || question.type === "order";
+}
+
+export function countMatchAndOrderQuestions(questions: readonly Question[]): number {
+  return questions.filter(isMatchOrOrder).length;
+}
+
 export function buildAttempt(simulado: Simulado, config: ExamConfig): Attempt {
+  const available = config.excludeMatchAndOrder
+    ? simulado.questions.filter((question) => !isMatchOrOrder(question))
+    : simulado.questions;
   const pool =
     config.questionSource === "official"
-      ? selectQuestions(simulado.questions, simulado.examQuestionCount)
-      : [...simulado.questions];
+      ? selectQuestions(available, simulado.examQuestionCount)
+      : [...available];
 
   const orderedQuestions = config.shuffleQuestions ? shuffle(pool) : pool;
   const order = orderedQuestions.map((question) =>
@@ -32,6 +43,7 @@ export function buildAttempt(simulado: Simulado, config: ExamConfig): Attempt {
 function buildQuestionState(question: Question, shuffleOptions: boolean): QuestionState {
   const state: QuestionState = {
     correct: null,
+    locked: false,
     flagged: false,
     picked: [],
     optOrder: [],

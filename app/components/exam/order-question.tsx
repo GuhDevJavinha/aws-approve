@@ -1,49 +1,37 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { OrderQuestion as OrderQuestionType, QuestionState } from "@/types/simulado";
+import { PoolSlot } from "./pool-slot";
 
 export function OrderQuestion({
   question,
   state,
+  revealAnswer,
   onChange,
 }: {
   question: OrderQuestionType;
   state: QuestionState;
+  revealAnswer: boolean;
   onChange: (slots: (number | null)[]) => void;
 }) {
-  function setSlot(slotIndex: number, value: string) {
+  function setSlot(slotIndex: number, value: number | null) {
     const next = [...state.slots];
-    next[slotIndex] = value === "" ? null : Number(value);
+    next[slotIndex] = value;
     onChange(next);
   }
 
   return (
     <div className="flex flex-col gap-3">
       {state.slots.map((value, slotIndex) => (
-        <div key={slotIndex} className="rounded-lg border border-border bg-card p-3">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-            Etapa {slotIndex + 1}
-          </p>
-          <Select value={value === null ? "" : String(value)} onValueChange={(next) => setSlot(slotIndex, next ?? "")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecionar…">
-                {(current: string | null) => {
-                  if (current === null || current === "") return "Selecionar…";
-                  const poolIndex = Number(current);
-                  return Number.isNaN(poolIndex) ? "Selecionar…" : question.pool[poolIndex];
-                }}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {question.pool.map((item, poolIndex) => (
-                <SelectItem key={poolIndex} value={String(poolIndex)}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <PoolSlot
+          key={slotIndex}
+          label={`Etapa ${slotIndex + 1}`}
+          pool={question.pool}
+          value={value}
+          correctValue={question.answer[slotIndex]!}
+          revealAnswer={revealAnswer}
+          onChange={(next) => setSlot(slotIndex, next)}
+        />
       ))}
     </div>
   );

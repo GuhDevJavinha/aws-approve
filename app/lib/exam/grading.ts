@@ -1,7 +1,5 @@
 import type { Question, QuestionState } from "@/types/simulado";
 
-// Grading only happens once, at the end of the attempt — each state's `correct`
-// stays null until then, whether or not the question was answered.
 export function gradeAttempt(
   questions: readonly Question[],
   order: readonly number[],
@@ -12,6 +10,11 @@ export function gradeAttempt(
     if (!isQuestionReady(question, state)) return state;
     return { ...state, correct: gradeQuestion(question, state) };
   });
+}
+
+export function confirmQuestion(question: Question, state: QuestionState): QuestionState {
+  if (!isQuestionReady(question, state)) return state;
+  return { ...state, locked: true, correct: gradeQuestion(question, state) };
 }
 
 export function isQuestionReady(question: Question, state: QuestionState): boolean {

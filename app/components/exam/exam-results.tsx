@@ -27,7 +27,7 @@ export function ExamResults({
   const passed = scorePercent >= getPassingScore(simulado);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
+    <div className="w-full max-w-3xl mx-auto px-4 py-10">
       <div className="rounded-lg border border-border bg-card p-7">
         <p className="text-[10px] font-bold uppercase tracking-[.16em] text-muted-foreground">
           Resultado do exame de prática
@@ -51,13 +51,16 @@ export function ExamResults({
           Tempo: {formatDuration(elapsedSeconds)}
         </p>
 
-        <div className="mt-4 flex gap-3">
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Button type="button" onClick={() => onReviewQuestion(0)}>
+            Revisar respostas
+          </Button>
+          <Button type="button" variant="outline" onClick={onRestart}>
+            Reiniciar simulado
+          </Button>
           <Link href="/simulados" className={buttonVariants({ variant: "secondary" })}>
             Voltar aos simulados
           </Link>
-          <Button type="button" onClick={onRestart}>
-            Reiniciar simulado
-          </Button>
         </div>
 
         <div className="mt-8 overflow-x-auto">
@@ -98,6 +101,7 @@ export function ExamResults({
                     <td className="py-2">
                       <button
                         type="button"
+                        aria-label={`Abrir questão ${position + 1} na revisão`}
                         className="text-accent-foreground underline"
                         onClick={() => onReviewQuestion(position)}
                       >

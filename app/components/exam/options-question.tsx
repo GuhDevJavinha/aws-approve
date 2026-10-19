@@ -8,13 +8,16 @@ const LETTERS = "ABCDEFG";
 export function OptionsQuestion({
   question,
   state,
+  revealAnswer,
   onChange,
 }: {
   question: SingleQuestion | MultiQuestion;
   state: QuestionState;
+  revealAnswer: boolean;
   onChange: (picked: number[]) => void;
 }) {
   function toggle(optionIndex: number) {
+    if (revealAnswer) return;
     if (question.type === "single") {
       onChange([optionIndex]);
       return;
@@ -36,15 +39,21 @@ export function OptionsQuestion({
         {state.optOrder.map((optionIndex, position) => {
           const option = question.options[optionIndex]!;
           const isSelected = state.picked.includes(optionIndex);
+          const isCorrectOption = question.answer.includes(option.id);
 
           return (
             <li key={option.id}>
               <button
                 type="button"
+                disabled={revealAnswer}
+                aria-pressed={isSelected}
                 onClick={() => toggle(optionIndex)}
                 className={cn(
-                  "flex w-full cursor-pointer items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-muted",
-                  isSelected && "border-ring bg-accent"
+                  "flex w-full items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left transition-colors",
+                  !revealAnswer && "cursor-pointer hover:bg-muted",
+                  isSelected && !revealAnswer && "border-ring bg-accent",
+                  revealAnswer && isCorrectOption && "border-success bg-success/10",
+                  revealAnswer && isSelected && !isCorrectOption && "border-destructive bg-destructive/10"
                 )}
               >
                 <span className="font-mono font-bold text-muted-foreground">{LETTERS[position]}</span>
@@ -56,6 +65,16 @@ export function OptionsQuestion({
                     </pre>
                   ) : null}
                 </span>
+                {revealAnswer && (isCorrectOption || isSelected) ? (
+                  <span className="flex flex-col items-end gap-1 text-xs font-bold">
+                    {isCorrectOption ? <span className="text-success">Correta</span> : null}
+                    {isSelected ? (
+                      <span className={isCorrectOption ? "text-muted-foreground" : "text-destructive"}>
+                        Sua escolha
+                      </span>
+                    ) : null}
+                  </span>
+                ) : null}
               </button>
             </li>
           );

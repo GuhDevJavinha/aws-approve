@@ -1,13 +1,13 @@
 "use client";
 
 import { startTransition, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
 import { buildAttempt } from "@/lib/exam/build-attempt";
 import { formatTime } from "@/lib/format-time";
-import { gradeAttempt, isQuestionReady } from "@/lib/exam/grading";
-import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
+import { confirmQuestion, gradeAttempt, isQuestionReady } from "@/lib/exam/grading";
+import { getQuestionStatus } from "@/lib/exam/question-status";
 import { getPassingScore } from "@/lib/exam/constants";
 import {
   clearInProgressAttempt,
@@ -16,13 +16,21 @@ import {
   saveInProgressAttempt,
 } from "@/lib/storage/attempt-storage";
 import { ExamIntro } from "./exam-intro";
-import { ExamNavPanel } from "./exam-nav-panel";
+import { ExamNavPanel, type NavItem, type NavTone } from "./exam-nav-panel";
 import { ExamResults } from "./exam-results";
-import { MatchQuestion } from "./match-question";
-import { OptionsQuestion } from "./options-question";
-import { OrderQuestion } from "./order-question";
+import { ExamReview } from "./exam-review";
+import { QuestionBody } from "./question-body";
+import { QuestionCard } from "./question-card";
 
-type Phase = "intro" | "running" | "results";
+type Phase = "intro" | "running" | "results" | "review";
+
+const RUNNING_LEGEND: NavTone[] = ["unanswered", "answered"];
+const IMMEDIATE_FEEDBACK_LEGEND: NavTone[] = ["unanswered", "answered", "correct", "incorrect"];
+
+function getRunningTone(state: QuestionState, isReady: boolean): NavTone {
+  if (state.locked) return getQuestionStatus(state);
+  return isReady ? "answered" : "unanswered";
+}
 
 export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [phase, setPhase] = useState<Phase>("intro");
@@ -30,6 +38,8 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showNav, setShowNav] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const feedbackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = loadInProgressAttempt(simulado.slug);
@@ -75,7 +85,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 
   if (paused) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-10 pb-28">
+      <div className="w-full max-w-3xl mx-auto px-4 py-10 pb-28">
         <div className="rounded-lg border border-border bg-card p-10 text-center">
           <p className="text-lg font-semibold text-foreground">Prova pausada</p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -96,13 +106,24 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
         attempt={attempt}
         elapsedSeconds={elapsedSeconds}
         onReviewQuestion={(index) => {
-          setAttempt((prev) => (prev ? { ...prev, currentIndex: index } : prev));
-          setPhase("running");
+          setReviewIndex(index);
+          setPhase("review");
         }}
         onRestart={() => {
           setAttempt(null);
           setPhase("intro");
         }}
+      />
+    );
+  }
+
+  if (phase === "review") {
+    return (
+      <ExamReview
+        simulado={simulado}
+        attempt={attempt}
+        initialIndex={reviewIndex}
+        onBack={() => setPhase("results")}
       />
     );
   }
@@ -113,6 +134,12 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
     isQuestionReady(simulado.questions[questionIndex]!, attempt.states[position]!)
   );
   const answeredCount = answered.filter(Boolean).length;
+  const awaitingConfirmation = attempt.config.immediateFeedback && !state.locked;
+  const navItems: NavItem[] = attempt.states.map((s, index) => ({
+    index,
+    tone: getRunningTone(s, answered[index]!),
+    flagged: s.flagged,
+  }));
 
   function updateState(patch: Partial<QuestionState>) {
     setAttempt((prev) => {
@@ -121,6 +148,11 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
       states[prev.currentIndex] = { ...states[prev.currentIndex]!, ...patch };
       return { ...prev, states };
     });
+  }
+
+  function confirmAnswer() {
+    flushSync(() => updateState(confirmQuestion(question, state)));
+    feedbackRef.current?.focus();
   }
 
   function goTo(index: number) {
@@ -164,32 +196,22 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const isLast = attempt.currentIndex >= attempt.order.length - 1;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 pb-28">
+    <div className="w-full max-w-3xl mx-auto px-4 py-10 pb-28">
       {showNav ? (
         <ExamNavPanel
-          states={attempt.states}
-          answered={answered}
+          items={navItems}
+          legend={attempt.config.immediateFeedback ? IMMEDIATE_FEEDBACK_LEGEND : RUNNING_LEGEND}
           currentIndex={attempt.currentIndex}
           onSelect={goTo}
         />
       ) : null}
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={attempt.currentIndex}
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.2 }}
-          className="rounded-lg border border-border bg-card"
-        >
-          <div className="flex items-center gap-3 border-b border-border px-5 py-3">
-            <span className="font-mono text-xs font-bold text-muted-foreground">
-              Questão {attempt.currentIndex + 1} de {attempt.order.length}
-            </span>
-            <span className="rounded-lg border border-border bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
-              {QUESTION_TYPE_LABEL[question.type]}
-            </span>
+      <QuestionCard
+        index={attempt.currentIndex}
+        total={attempt.order.length}
+        type={question.type}
+        actions={
+          <>
             {attempt.config.timerEnabled ? (
               <span
                 className={`font-mono text-xs font-bold ${
@@ -213,27 +235,27 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
             >
               {state.flagged ? "Marcada para revisão" : "Marcar para revisão"}
             </Button>
-          </div>
-
-          <div className="p-5">
-            <p className="whitespace-pre-wrap text-foreground">{question.stem}</p>
-            {question.code ? (
-              <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 font-mono text-xs">{question.code}</pre>
-            ) : null}
-            {question.ask ? <p className="mt-4 font-semibold text-foreground">{question.ask}</p> : null}
-
-            <div className="mt-4">
-              {question.type === "single" || question.type === "multi" ? (
-                <OptionsQuestion question={question} state={state} onChange={(picked) => updateState({ picked })} />
-              ) : question.type === "order" ? (
-                <OrderQuestion question={question} state={state} onChange={(slots) => updateState({ slots })} />
-              ) : (
-                <MatchQuestion question={question} state={state} onChange={(slots) => updateState({ slots })} />
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          </>
+        }
+      >
+        <QuestionBody
+          question={question}
+          state={state}
+          revealAnswer={state.locked}
+          feedbackRef={feedbackRef}
+          onChange={updateState}
+        />
+        {awaitingConfirmation ? (
+          <Button
+            type="button"
+            className="mt-4"
+            disabled={!isQuestionReady(question, state)}
+            onClick={confirmAnswer}
+          >
+            Confirmar resposta
+          </Button>
+        ) : null}
+      </QuestionCard>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-card px-4 py-3">
         <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3">
@@ -241,7 +263,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
             Respondidas <b className="text-foreground">{answeredCount}</b> de {attempt.order.length}
           </span>
           <Button type="button" variant="outline" onClick={() => setShowNav((v) => !v)}>
-            {showNav ? "Fechar revisão" : "Revisar questões"}
+            {showNav ? "Fechar painel" : "Painel de questões"}
           </Button>
           <Button type="button" variant="outline" onClick={requestFinish}>
             Finalizar
@@ -249,7 +271,12 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
           <Button type="button" variant="secondary" disabled={isFirst} onClick={() => goTo(attempt.currentIndex - 1)}>
             Anterior
           </Button>
-          <Button type="button" disabled={isLast} onClick={() => goTo(attempt.currentIndex + 1)}>
+          <Button
+            type="button"
+            variant={awaitingConfirmation ? "outline" : "default"}
+            disabled={isLast}
+            onClick={() => goTo(attempt.currentIndex + 1)}
+          >
             Próxima
           </Button>
         </div>
