@@ -13,13 +13,26 @@ function requireEnv(name: string): string {
   return value;
 }
 
-const client = new CognitoIdentityProviderClient({ region: requireEnv("COGNITO_REGION") });
+interface CognitoConfig {
+  client: CognitoIdentityProviderClient;
+  clientId: string;
+  clientSecret: string;
+}
+
+let cachedConfig: CognitoConfig | undefined;
+
+function getConfig(): CognitoConfig {
+  cachedConfig ??= {
+    client: new CognitoIdentityProviderClient({ region: requireEnv("COGNITO_REGION") }),
+    clientId: requireEnv("COGNITO_CLIENT_ID"),
+    clientSecret: requireEnv("COGNITO_CLIENT_SECRET"),
+  };
+  return cachedConfig;
+}
 
 function secretHash(username: string): string {
-  const clientId = requireEnv("COGNITO_CLIENT_ID");
-  return createHmac("sha256", requireEnv("COGNITO_CLIENT_SECRET"))
-    .update(username + clientId)
-    .digest("base64");
+  const { clientId, clientSecret } = getConfig();
+  return createHmac("sha256", clientSecret).update(username + clientId).digest("base64");
 }
 
 function decodeUsername(accessToken: string): string {
@@ -98,11 +111,12 @@ function tokensFromAuthResult(auth: {
 }
 
 export async function signIn(email: string, password: string): Promise<SignInResult> {
+  const { client, clientId } = getConfig();
   try {
     const result = await client.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: requireEnv("COGNITO_CLIENT_ID"),
+        ClientId: clientId,
         AuthParameters: { USERNAME: email, PASSWORD: password, SECRET_HASH: secretHash(email) },
       })
     );
@@ -130,11 +144,12 @@ export async function completeNewPassword(
   newPassword: string,
   session: string
 ): Promise<CognitoTokens> {
+  const { client, clientId } = getConfig();
   try {
     const result = await client.send(
       new RespondToAuthChallengeCommand({
         ChallengeName: "NEW_PASSWORD_REQUIRED",
-        ClientId: requireEnv("COGNITO_CLIENT_ID"),
+        ClientId: clientId,
         Session: session,
         ChallengeResponses: {
           USERNAME: email,
@@ -165,11 +180,12 @@ export async function refreshTokens(
   refreshToken: string,
   username: string
 ): Promise<RefreshedTokens | null> {
+  const { client, clientId } = getConfig();
   try {
     const result = await client.send(
       new InitiateAuthCommand({
         AuthFlow: "REFRESH_TOKEN_AUTH",
-        ClientId: requireEnv("COGNITO_CLIENT_ID"),
+        ClientId: clientId,
         AuthParameters: { REFRESH_TOKEN: refreshToken, SECRET_HASH: secretHash(username) },
       })
     );
@@ -182,6 +198,7 @@ export async function refreshTokens(
 }
 
 export async function getCognitoUser(accessToken: string): Promise<{ email: string } | null> {
+  const { client } = getConfig();
   try {
     const result = await client.send(new GetUserCommand({ AccessToken: accessToken }));
     const email = result.UserAttributes?.find((attribute) => attribute.Name === "email")?.Value;
@@ -192,6 +209,7 @@ export async function getCognitoUser(accessToken: string): Promise<{ email: stri
 }
 
 export async function signOut(accessToken: string): Promise<void> {
+  const { client } = getConfig();
   try {
     await client.send(new GlobalSignOutCommand({ AccessToken: accessToken }));
   } catch {
