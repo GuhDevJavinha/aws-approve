@@ -5,20 +5,23 @@ import { motion } from "motion/react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { getPassingScore } from "@/lib/exam/constants";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
+import { formatDuration } from "@/lib/format-time";
 import type { Attempt, Simulado } from "@/types/simulado";
 
 export function ExamResults({
   simulado,
   attempt,
+  elapsedSeconds,
   onReviewQuestion,
   onRestart,
 }: {
   simulado: Simulado;
   attempt: Attempt;
+  elapsedSeconds: number;
   onReviewQuestion: (index: number) => void;
   onRestart: () => void;
 }) {
-  const answeredCount = attempt.states.filter((s) => s.locked).length;
+  const answeredCount = attempt.states.filter((s) => s.correct !== null).length;
   const correctCount = attempt.states.filter((s) => s.correct === true).length;
   const scorePercent = answeredCount === 0 ? 0 : Math.round((correctCount / answeredCount) * 100);
   const passed = scorePercent >= getPassingScore(simulado);
@@ -44,6 +47,8 @@ export function ExamResults({
           {answeredCount < attempt.order.length
             ? ` · ${attempt.order.length - answeredCount} sem resposta`
             : ""}
+          {" · "}
+          Tempo: {formatDuration(elapsedSeconds)}
         </p>
 
         <div className="mt-4 flex gap-3">

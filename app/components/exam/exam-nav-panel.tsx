@@ -5,21 +5,20 @@ import type { QuestionState } from "@/types/simulado";
 
 export function ExamNavPanel({
   states,
+  answered,
   currentIndex,
-  revealAnswers,
   onSelect,
 }: {
   states: QuestionState[];
+  answered: boolean[];
   currentIndex: number;
-  revealAnswers: boolean;
   onSelect: (index: number) => void;
 }) {
   return (
     <div className="mb-4 rounded-lg border border-border bg-card p-4">
       <div className="mb-3 flex flex-wrap gap-3 text-xs text-muted-foreground">
         <Legend swatch="border border-border bg-card" label="Não respondida" />
-        <Legend swatch="border border-success bg-success/10" label="Correta" />
-        <Legend swatch="border border-destructive bg-destructive/10" label="Incorreta" />
+        <Legend swatch="border border-ring bg-accent" label="Respondida" />
         <Legend swatch="rounded-full bg-primary" label="Marcada para revisão" />
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-1.5">
@@ -30,8 +29,7 @@ export function ExamNavPanel({
             onClick={() => onSelect(index)}
             className={cn(
               "relative rounded-lg border border-border bg-card py-1.5 font-mono text-xs font-bold text-foreground",
-              revealAnswers && state.correct === true && "border-success bg-success/10",
-              revealAnswers && state.correct === false && "border-destructive bg-destructive/10",
+              answered[index] && "border-ring bg-accent",
               index === currentIndex && "outline outline-2 outline-foreground"
             )}
           >

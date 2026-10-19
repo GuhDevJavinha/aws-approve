@@ -31,7 +31,6 @@ export function buildAttempt(simulado: Simulado, config: ExamConfig): Attempt {
 
 function buildQuestionState(question: Question, shuffleOptions: boolean): QuestionState {
   const state: QuestionState = {
-    locked: false,
     correct: null,
     flagged: false,
     picked: [],

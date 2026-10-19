@@ -11,7 +11,6 @@ import type { ExamConfig, Simulado } from "@/types/simulado";
 const DEFAULT_CONFIG: ExamConfig = {
   questionSource: "all",
   timerEnabled: false,
-  immediateFeedback: true,
   shuffleQuestions: false,
   shuffleOptions: false,
 };
@@ -29,7 +28,6 @@ export function ExamIntro({
     setConfig({
       questionSource: "official",
       timerEnabled: true,
-      immediateFeedback: false,
       shuffleQuestions: true,
       shuffleOptions: true,
     });
@@ -72,12 +70,6 @@ export function ExamIntro({
             description="Ao zerar, o simulado é finalizado automaticamente."
             checked={config.timerEnabled}
             onCheckedChange={(checked) => setConfig((c) => ({ ...c, timerEnabled: checked }))}
-          />
-          <ToggleRow
-            label="Feedback imediato"
-            description="Mostra certo/errado ao confirmar cada resposta."
-            checked={config.immediateFeedback}
-            onCheckedChange={(checked) => setConfig((c) => ({ ...c, immediateFeedback: checked }))}
           />
           <ToggleRow
             label="Embaralhar questões"

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
 import { buildAttempt } from "@/lib/exam/build-attempt";
 import { formatTime } from "@/lib/format-time";
-import { gradeQuestion, isQuestionReady } from "@/lib/exam/grading";
+import { gradeAttempt, isQuestionReady } from "@/lib/exam/grading";
 import { QUESTION_TYPE_LABEL } from "@/lib/exam/type-labels";
 import { getPassingScore } from "@/lib/exam/constants";
 import {
@@ -15,7 +15,6 @@ import {
   saveCompletedResult,
   saveInProgressAttempt,
 } from "@/lib/storage/attempt-storage";
-import { cn } from "@/lib/utils";
 import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel } from "./exam-nav-panel";
 import { ExamResults } from "./exam-results";
@@ -28,6 +27,7 @@ type Phase = "intro" | "running" | "results";
 export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [attempt, setAttempt] = useState<Attempt | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showNav, setShowNav] = useState(false);
   const [paused, setPaused] = useState(false);
 
@@ -94,6 +94,7 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
       <ExamResults
         simulado={simulado}
         attempt={attempt}
+        elapsedSeconds={elapsedSeconds}
         onReviewQuestion={(index) => {
           setAttempt((prev) => (prev ? { ...prev, currentIndex: index } : prev));
           setPhase("running");
@@ -108,9 +109,10 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 
   const question = simulado.questions[attempt.order[attempt.currentIndex]!]!;
   const state = attempt.states[attempt.currentIndex]!;
-  const revealAnswer = state.locked && attempt.config.immediateFeedback;
-  const answeredCount = attempt.states.filter((s) => s.locked).length;
-  const correctCount = attempt.states.filter((s) => s.correct === true).length;
+  const answered = attempt.order.map((questionIndex, position) =>
+    isQuestionReady(simulado.questions[questionIndex]!, attempt.states[position]!)
+  );
+  const answeredCount = answered.filter(Boolean).length;
 
   function updateState(patch: Partial<QuestionState>) {
     setAttempt((prev) => {
@@ -128,19 +130,25 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 
   function finishAttempt() {
     if (!attempt) return;
-    const answered = attempt.states.filter((s) => s.locked).length;
-    const correct = attempt.states.filter((s) => s.correct === true).length;
-    const scorePercent = answered === 0 ? 0 : Math.round((correct / answered) * 100);
+    const gradedStates = gradeAttempt(simulado.questions, attempt.order, attempt.states);
+    const gradedAnswered = gradedStates.filter((s) => s.correct !== null).length;
+    const gradedCorrect = gradedStates.filter((s) => s.correct === true).length;
+    const scorePercent = gradedAnswered === 0 ? 0 : Math.round((gradedCorrect / gradedAnswered) * 100);
+    const finishedAt = Date.now();
+    const elapsed = Math.max(0, Math.round((finishedAt - Date.parse(attempt.startedAt)) / 1000));
     saveCompletedResult({
       simuladoSlug: simulado.slug,
-      completedAt: new Date().toISOString(),
+      completedAt: new Date(finishedAt).toISOString(),
       scorePercent,
-      correctCount: correct,
-      answeredCount: answered,
+      correctCount: gradedCorrect,
+      answeredCount: gradedAnswered,
       totalCount: attempt.order.length,
       passed: scorePercent >= getPassingScore(simulado),
+      elapsedSeconds: elapsed,
     });
     clearInProgressAttempt(simulado.slug);
+    setAttempt({ ...attempt, states: gradedStates });
+    setElapsedSeconds(elapsed);
     setPhase("results");
   }
 
@@ -152,26 +160,16 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
     finishAttempt();
   };
 
-  const confirmAnswer = () => {
-    if (state.locked) {
-      if (attempt.currentIndex >= attempt.order.length - 1) {
-        finishAttempt();
-      } else {
-        goTo(attempt.currentIndex + 1);
-      }
-      return;
-    }
-    if (!isQuestionReady(question, state)) return;
-    updateState({ locked: true, correct: gradeQuestion(question, state) });
-  };
+  const isFirst = attempt.currentIndex === 0;
+  const isLast = attempt.currentIndex >= attempt.order.length - 1;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 pb-28">
       {showNav ? (
         <ExamNavPanel
           states={attempt.states}
+          answered={answered}
           currentIndex={attempt.currentIndex}
-          revealAnswers={attempt.config.immediateFeedback}
           onSelect={goTo}
         />
       ) : null}
@@ -194,10 +192,9 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
             </span>
             {attempt.config.timerEnabled ? (
               <span
-                className={cn(
-                  "font-mono text-xs font-bold",
+                className={`font-mono text-xs font-bold ${
                   attempt.secondsRemaining <= 300 ? "text-destructive" : "text-muted-foreground"
-                )}
+                }`}
               >
                 {formatTime(attempt.secondsRemaining)}
               </span>
@@ -227,42 +224,13 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
 
             <div className="mt-4">
               {question.type === "single" || question.type === "multi" ? (
-                <OptionsQuestion
-                  question={question}
-                  state={state}
-                  revealAnswer={revealAnswer}
-                  onChange={(picked) => updateState({ picked })}
-                />
+                <OptionsQuestion question={question} state={state} onChange={(picked) => updateState({ picked })} />
               ) : question.type === "order" ? (
-                <OrderQuestion
-                  question={question}
-                  state={state}
-                  revealAnswer={revealAnswer}
-                  onChange={(slots) => updateState({ slots })}
-                />
+                <OrderQuestion question={question} state={state} onChange={(slots) => updateState({ slots })} />
               ) : (
-                <MatchQuestion
-                  question={question}
-                  state={state}
-                  revealAnswer={revealAnswer}
-                  onChange={(slots) => updateState({ slots })}
-                />
+                <MatchQuestion question={question} state={state} onChange={(slots) => updateState({ slots })} />
               )}
             </div>
-
-            {revealAnswer ? (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={
-                  state.correct
-                    ? "mt-4 rounded-lg border border-success bg-success/10 px-4 py-2 text-sm font-bold text-success"
-                    : "mt-4 rounded-lg border border-destructive bg-destructive/10 px-4 py-2 text-sm font-bold text-destructive"
-                }
-              >
-                {state.correct ? "Correto" : "Incorreto"}
-              </motion.div>
-            ) : null}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -271,12 +239,6 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
         <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3">
           <span className="mr-auto text-sm text-muted-foreground">
             Respondidas <b className="text-foreground">{answeredCount}</b> de {attempt.order.length}
-            {attempt.config.immediateFeedback ? (
-              <>
-                {" "}
-                · Corretas <b className="text-foreground">{correctCount}</b>
-              </>
-            ) : null}
           </span>
           <Button type="button" variant="outline" onClick={() => setShowNav((v) => !v)}>
             {showNav ? "Fechar revisão" : "Revisar questões"}
@@ -284,24 +246,11 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
           <Button type="button" variant="outline" onClick={requestFinish}>
             Finalizar
           </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={attempt.currentIndex === 0}
-            onClick={() => goTo(attempt.currentIndex - 1)}
-          >
+          <Button type="button" variant="secondary" disabled={isFirst} onClick={() => goTo(attempt.currentIndex - 1)}>
             Anterior
           </Button>
-          <Button
-            type="button"
-            onClick={confirmAnswer}
-            disabled={!state.locked && !isQuestionReady(question, state)}
-          >
-            {state.locked
-              ? attempt.currentIndex >= attempt.order.length - 1
-                ? "Ver resultado"
-                : "Próxima questão"
-              : "Confirmar resposta"}
+          <Button type="button" disabled={isLast} onClick={() => goTo(attempt.currentIndex + 1)}>
+            Próxima
           </Button>
         </div>
       </div>

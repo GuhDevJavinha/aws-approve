@@ -63,13 +63,11 @@ export interface Simulado {
 export interface ExamConfig {
   questionSource: "all" | "official";
   timerEnabled: boolean;
-  immediateFeedback: boolean;
   shuffleQuestions: boolean;
   shuffleOptions: boolean;
 }
 
 export interface QuestionState {
-  locked: boolean;
   correct: boolean | null;
   flagged: boolean;
   picked: number[];
@@ -95,4 +93,5 @@ export interface CompletedResult {
   answeredCount: number;
   totalCount: number;
   passed: boolean;
+  elapsedSeconds: number;
 }
