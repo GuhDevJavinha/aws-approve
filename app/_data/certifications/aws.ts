@@ -32,6 +32,7 @@ export const awsCertifications: Certification[] = [
     title: "AWS Certified AI Practitioner",
     tier: "foundational",
     studyUrl: `${EXAM_GUIDE}/ai-practitioner-01.html`,
+    simuladoSlug: "ai-practitioner",
   },
   {
     id: "aws-soa-c03",

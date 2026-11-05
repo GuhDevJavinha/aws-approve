@@ -21,6 +21,7 @@ export const githubCertifications: Certification[] = [
     title: "GitHub Foundations",
     tier: "foundational",
     studyUrl: DOCS,
+    simuladoSlug: "github-foundations",
   },
   {
     id: "github-copilot",
@@ -29,6 +30,7 @@ export const githubCertifications: Certification[] = [
     title: "GitHub Copilot",
     tier: "foundational",
     studyUrl: DOCS,
+    simuladoSlug: "github-copilot",
   },
   {
     id: "github-actions",
@@ -37,6 +39,7 @@ export const githubCertifications: Certification[] = [
     title: "GitHub Actions",
     tier: "associate",
     studyUrl: DOCS,
+    simuladoSlug: "github-actions",
   },
   {
     id: "github-administration",
@@ -45,6 +48,7 @@ export const githubCertifications: Certification[] = [
     title: "GitHub Administration",
     tier: "professional",
     studyUrl: DOCS,
+    simuladoSlug: "github-administration",
   },
   {
     id: "github-advanced-security",
@@ -53,5 +57,6 @@ export const githubCertifications: Certification[] = [
     title: "GitHub Advanced Security",
     tier: "professional",
     studyUrl: DOCS,
+    simuladoSlug: "github-advanced-security",
   },
 ];
