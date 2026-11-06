@@ -2,7 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { CognitoAuthError, completeNewPassword, signIn, signOut, type CognitoTokens } from "@/lib/auth/cognito";
+import {
+  CognitoAuthError,
+  completeNewPassword,
+  signIn,
+  signOut,
+  UserNotConfirmedError,
+  type CognitoTokens,
+} from "@/lib/auth/cognito";
 import {
   ACCESS_TOKEN_COOKIE,
   clearSessionCookies,
@@ -13,6 +20,7 @@ import {
 export interface LoginState {
   error: string | null;
   newPasswordChallenge: { email: string; session: string } | null;
+  unconfirmedEmail?: string;
 }
 
 async function completeLogin(tokens: CognitoTokens): Promise<never> {
@@ -58,6 +66,9 @@ export async function login(_prevState: LoginState, formData: FormData): Promise
   try {
     result = await signIn(email, password);
   } catch (error) {
+    if (error instanceof UserNotConfirmedError) {
+      return { error: error.message, newPasswordChallenge: null, unconfirmedEmail: email };
+    }
     if (error instanceof CognitoAuthError) return { error: error.message, newPasswordChallenge: null };
     throw error;
   }

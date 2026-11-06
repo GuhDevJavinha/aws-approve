@@ -1,10 +1,16 @@
 import { createHmac } from "node:crypto";
 import {
+  ChangePasswordCommand,
   CognitoIdentityProviderClient,
+  ConfirmForgotPasswordCommand,
+  ConfirmSignUpCommand,
+  ForgotPasswordCommand,
   GetUserCommand,
   GlobalSignOutCommand,
   InitiateAuthCommand,
+  ResendConfirmationCodeCommand,
   RespondToAuthChallengeCommand,
+  SignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 function requireEnv(name: string): string {
@@ -45,14 +51,17 @@ function decodeUsername(accessToken: string): string {
 
 export class CognitoAuthError extends Error {}
 
+export class UserNotConfirmedError extends CognitoAuthError {}
+
+function errorName(error: unknown): string {
+  return error instanceof Error ? error.name : "";
+}
+
 function mapSignInError(error: unknown): string {
-  const name = error instanceof Error ? error.name : "";
-  switch (name) {
+  switch (errorName(error)) {
     case "NotAuthorizedException":
     case "UserNotFoundException":
       return "Email ou senha inválidos.";
-    case "UserNotConfirmedException":
-      return "Sua conta ainda não foi confirmada no Cognito.";
     case "PasswordResetRequiredException":
       return "Você precisa redefinir sua senha antes de entrar.";
     case "TooManyRequestsException":
@@ -69,8 +78,7 @@ function mapSignInError(error: unknown): string {
 }
 
 function mapNewPasswordError(error: unknown): string {
-  const name = error instanceof Error ? error.name : "";
-  switch (name) {
+  switch (errorName(error)) {
     case "InvalidPasswordException":
       return "A nova senha não atende aos requisitos do Cognito (tamanho, letras maiúsculas, números etc.).";
     case "NotAuthorizedException":
@@ -135,6 +143,9 @@ export async function signIn(email: string, password: string): Promise<SignInRes
     return { status: "success", tokens: tokensFromAuthResult(result.AuthenticationResult) };
   } catch (error) {
     if (error instanceof CognitoAuthError) throw error;
+    if (errorName(error) === "UserNotConfirmedException") {
+      throw new UserNotConfirmedError("Sua conta ainda não foi confirmada. Confirme o código enviado ao seu email.");
+    }
     throw new CognitoAuthError(mapSignInError(error));
   }
 }
@@ -215,4 +226,103 @@ export async function signOut(accessToken: string): Promise<void> {
   } catch {
     // token already invalid or expired — nothing left to revoke
   }
+}
+
+const PASSWORD_POLICY_MESSAGE =
+  "A senha precisa ter pelo menos 8 caracteres, com letra maiúscula, letra minúscula, número e símbolo.";
+
+function mapAccountError(error: unknown, context: string): string {
+  switch (errorName(error)) {
+    case "UsernameExistsException":
+      return "Já existe uma conta com este email.";
+    case "InvalidPasswordException":
+      return PASSWORD_POLICY_MESSAGE;
+    case "CodeMismatchException":
+      return "Código inválido. Confira o código enviado ao seu email.";
+    case "ExpiredCodeException":
+      return "Código expirado. Solicite um novo código.";
+    case "NotAuthorizedException":
+      return context === "changePassword" ? "Senha atual incorreta." : "Esta operação não é permitida para esta conta.";
+    case "LimitExceededException":
+    case "TooManyRequestsException":
+    case "TooManyFailedAttemptsException":
+      return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+    case "CodeDeliveryFailureException":
+      return "Não foi possível enviar o email com o código. Tente novamente mais tarde.";
+    case "InvalidParameterException":
+      return "Dados inválidos. Confira o email e a senha informados.";
+    default:
+      console.error(`Cognito ${context} error:`, error);
+      return "Não foi possível concluir a operação. Tente novamente.";
+  }
+}
+
+async function sendAccountCommand(context: string, send: () => Promise<unknown>): Promise<void> {
+  try {
+    await send();
+  } catch (error) {
+    throw new CognitoAuthError(mapAccountError(error, context));
+  }
+}
+
+export async function signUp(email: string, password: string): Promise<void> {
+  const { client, clientId } = getConfig();
+  await sendAccountCommand("signUp", () =>
+    client.send(
+      new SignUpCommand({
+        ClientId: clientId,
+        Username: email,
+        Password: password,
+        SecretHash: secretHash(email),
+        UserAttributes: [{ Name: "email", Value: email }],
+      })
+    )
+  );
+}
+
+export async function confirmSignUp(email: string, code: string): Promise<void> {
+  const { client, clientId } = getConfig();
+  await sendAccountCommand("confirmSignUp", () =>
+    client.send(
+      new ConfirmSignUpCommand({ ClientId: clientId, Username: email, ConfirmationCode: code, SecretHash: secretHash(email) })
+    )
+  );
+}
+
+export async function resendConfirmationCode(email: string): Promise<void> {
+  const { client, clientId } = getConfig();
+  await sendAccountCommand("resendConfirmationCode", () =>
+    client.send(new ResendConfirmationCodeCommand({ ClientId: clientId, Username: email, SecretHash: secretHash(email) }))
+  );
+}
+
+export async function forgotPassword(email: string): Promise<void> {
+  const { client, clientId } = getConfig();
+  await sendAccountCommand("forgotPassword", () =>
+    client.send(new ForgotPasswordCommand({ ClientId: clientId, Username: email, SecretHash: secretHash(email) }))
+  );
+}
+
+export async function confirmForgotPassword(email: string, code: string, newPassword: string): Promise<void> {
+  const { client, clientId } = getConfig();
+  await sendAccountCommand("confirmForgotPassword", () =>
+    client.send(
+      new ConfirmForgotPasswordCommand({
+        ClientId: clientId,
+        Username: email,
+        ConfirmationCode: code,
+        Password: newPassword,
+        SecretHash: secretHash(email),
+      })
+    )
+  );
+}
+
+export async function changePassword(accessToken: string, currentPassword: string, newPassword: string): Promise<void> {
+  const { client } = getConfig();
+  await sendAccountCommand("changePassword", () =>
+    client.send(
+      new ChangePasswordCommand({ AccessToken: accessToken, PreviousPassword: currentPassword, ProposedPassword: newPassword })
+    )
+  );
 }

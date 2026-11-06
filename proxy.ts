@@ -58,5 +58,6 @@ export const config = {
     "/simulados/:path*",
     "/hub/:path*",
     "/exam/:path*",
+    "/conta/:path*",
   ],
 };
