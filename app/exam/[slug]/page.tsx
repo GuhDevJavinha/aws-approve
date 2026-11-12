@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/dal";
-import { getSimuladoBySlug } from "@/_data";
+import { getSimuladoBySlug } from "@/lib/dynamodb/simulados";
 import { ExamRunner } from "@/components/exam/exam-runner";
 
 export default async function ExamPage({
@@ -12,7 +12,7 @@ export default async function ExamPage({
   if (!session) redirect("/login");
 
   const { slug } = await params;
-  const simulado = getSimuladoBySlug(slug);
+  const simulado = await getSimuladoBySlug(slug);
   if (!simulado) notFound();
 
   return <ExamRunner simulado={simulado} />;

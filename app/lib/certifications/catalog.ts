@@ -1,4 +1,3 @@
-import { getSimuladoBySlug } from "@/_data";
 import { certifications, PROVIDER_ORDER } from "@/_data/certifications";
 import type {
   Certification,
@@ -19,8 +18,7 @@ export function isCertificationProvider(value: string): value is CertificationPr
 }
 
 export function isSimuladoAvailable(certification: Certification): boolean {
-  if (!certification.simuladoSlug) return false;
-  return getSimuladoBySlug(certification.simuladoSlug) !== undefined;
+  return Boolean(certification.simuladoSlug);
 }
 
 export function sortByDifficulty(list: Certification[]): Certification[] {

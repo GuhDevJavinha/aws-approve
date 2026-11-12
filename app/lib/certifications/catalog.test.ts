@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { certifications, PROVIDER_META, PROVIDER_ORDER } from "@/_data/certifications";
-import { getSimuladoBySlug } from "@/_data";
 import type { Certification, CertificationProvider } from "@/types/certification";
 import {
   certificationsForProvider,
@@ -79,11 +78,11 @@ describe("isSimuladoAvailable", () => {
     expect(isSimuladoAvailable(cert())).toBe(false);
   });
 
-  it("is false when simuladoSlug does not resolve to a simulado", () => {
-    expect(isSimuladoAvailable(cert({ simuladoSlug: "slug-que-nao-existe" }))).toBe(false);
+  it("is false when simuladoSlug is empty", () => {
+    expect(isSimuladoAvailable(cert({ simuladoSlug: "" }))).toBe(false);
   });
 
-  it("is true when simuladoSlug resolves", () => {
+  it("is true when the certification has a simuladoSlug", () => {
     expect(isSimuladoAvailable(cert({ simuladoSlug: "security-especialist" }))).toBe(true);
   });
 });
@@ -239,13 +238,9 @@ describe("isCertificationProvider", () => {
 });
 
 describe("invariantes do catálogo", () => {
-  it("resolves every simuladoSlug present in the catalog", () => {
-    const broken = certifications
-      .filter((c) => c.simuladoSlug !== undefined)
-      .filter((c) => getSimuladoBySlug(c.simuladoSlug!) === undefined)
-      .map((c) => `${c.id} -> ${c.simuladoSlug}`);
-
-    expect(broken).toEqual([]);
+  it("has a unique simuladoSlug for every certification that sets one", () => {
+    const slugs = certifications.flatMap((c) => (c.simuladoSlug ? [c.simuladoSlug] : []));
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 
   it("has a unique id for every certification", () => {

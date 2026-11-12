@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { getSimuladoBySlug } from "@/_data";
 import { PROVIDER_META } from "@/_data/certifications";
 import { Breadcrumb } from "@/components/nav/breadcrumb";
 import { NoSimulado } from "@/components/simulados/no-simulado";
 import { SimuladoSummary } from "@/components/simulados/simulado-summary";
 import { findCertification, isCertificationProvider } from "@/lib/certifications/catalog";
+import { getSimuladoMeta } from "@/lib/dynamodb/simulados";
 import { getPassingScore } from "@/lib/exam/constants";
 
 export default async function SimuladoPage(
@@ -18,7 +18,7 @@ export default async function SimuladoPage(
 
   const meta = PROVIDER_META[provider];
   const simulado = certification.simuladoSlug
-    ? getSimuladoBySlug(certification.simuladoSlug)
+    ? await getSimuladoMeta(certification.simuladoSlug)
     : undefined;
 
   return (
@@ -34,8 +34,8 @@ export default async function SimuladoPage(
       {simulado ? (
         <SimuladoSummary
           certification={certification}
-          simuladoSlug={simulado.slug}
-          bankSize={simulado.questions.length}
+          simuladoSlug={simulado.simuladoSlug}
+          bankSize={simulado.questionCount}
           examQuestionCount={simulado.examQuestionCount}
           examDurationMinutes={simulado.examDurationMinutes}
           passingScore={getPassingScore(simulado)}
