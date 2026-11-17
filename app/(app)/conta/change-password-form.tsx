@@ -23,7 +23,7 @@ export function ChangePasswordForm({ email }: { email: string }) {
       <FormMessage error={state.error} notice={state.notice} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" size="lg" disabled={isPending}>
           {isPending ? "Salvando…" : "Alterar senha"}
         </Button>
         <Link

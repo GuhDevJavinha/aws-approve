@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PROVIDER_META } from "@/_data/certifications";
 import { CertificationGrid } from "@/components/certifications/certification-grid";
 import { Breadcrumb } from "@/components/nav/breadcrumb";
+import { PageHeader } from "@/components/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { isCertificationProvider, simuladosForProvider } from "@/lib/certifications/catalog";
 import { plural } from "@/lib/plural";
@@ -15,16 +16,13 @@ export default async function ProviderSimuladosPage(props: PageProps<"/simulados
   const list = simuladosForProvider(provider);
 
   return (
-    <div className="mx-auto max-w-6xl flex flex-col gap-6">
+    <div className="mx-auto max-w-6xl flex flex-col gap-8">
       <Breadcrumb crumbs={[{ label: "Simulados", href: "/simulados" }, { label: meta.label }]} />
 
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-foreground">Simulados {meta.label}</h1>
-        <p className="text-sm text-muted-foreground">
-          {plural(list.length, "simulado disponível", "simulados disponíveis")}, do mais fácil ao
-          mais difícil.
-        </p>
-      </header>
+      <PageHeader title={`Simulados ${meta.label}`}>
+        {plural(list.length, "simulado disponível", "simulados disponíveis")}, do mais fácil ao
+        mais difícil.
+      </PageHeader>
 
       <CertificationGrid
         certifications={list}
@@ -37,7 +35,7 @@ export default async function ProviderSimuladosPage(props: PageProps<"/simulados
             </p>
             <Link
               href={`/certificacoes/${provider}`}
-              className={buttonVariants({ variant: "outline", size: "lg" })}
+              className={buttonVariants({ variant: "outline" })}
             >
               Ver certificações {meta.label}
             </Link>

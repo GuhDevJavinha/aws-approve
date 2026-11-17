@@ -22,7 +22,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
             <LogoutButton />
           </div>
         </header>
-        <div className="flex-1 px-4 py-8 sm:px-6">
+        <div className="flex-1 px-4 py-8 sm:px-8 sm:py-10">
           <PageTransition>{children}</PageTransition>
         </div>
       </SidebarInset>

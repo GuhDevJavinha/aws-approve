@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { groupByTier, isSimuladoAvailable } from "@/lib/certifications/catalog";
+import { MONO_LABEL_CLASS } from "@/lib/styles";
 import type { Certification } from "@/types/certification";
 import { CertificationCard } from "./certification-card";
 
@@ -23,17 +24,13 @@ export function CertificationGrid({
   }));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       {sections.map((section) => (
-        <section key={section.tier} className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <h2 className="text-[10px] tracking-[.16em] uppercase text-muted-foreground font-bold">
-              {section.label}
-            </h2>
-            <span className="text-xs text-muted-foreground">
-              {section.certifications.length}
-            </span>
+        <section key={section.tier} className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <h2 className={MONO_LABEL_CLASS}>{section.label}</h2>
             <span aria-hidden className="h-px flex-1 bg-border" />
+            <span className={MONO_LABEL_CLASS}>{section.certifications.length}</span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { PROVIDER_META } from "@/_data/certifications";
 import { CertificationGrid } from "@/components/certifications/certification-grid";
 import { Breadcrumb } from "@/components/nav/breadcrumb";
+import { PageHeader } from "@/components/page-header";
 import { certificationsForProvider, isCertificationProvider } from "@/lib/certifications/catalog";
 import { plural } from "@/lib/plural";
 
@@ -15,17 +16,14 @@ export default async function ProviderCertificationsPage(
   const list = certificationsForProvider(provider);
 
   return (
-    <div className="mx-auto max-w-6xl flex flex-col gap-6">
+    <div className="mx-auto max-w-6xl flex flex-col gap-8">
       <Breadcrumb
         crumbs={[{ label: "Certificações", href: "/certificacoes" }, { label: meta.label }]}
       />
 
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-foreground">Certificações {meta.label}</h1>
-        <p className="text-sm text-muted-foreground">
-          {plural(list.length, "certificação", "certificações")}, da mais fácil à mais difícil.
-        </p>
-      </header>
+      <PageHeader title={`Certificações ${meta.label}`}>
+        {plural(list.length, "certificação", "certificações")}, da mais fácil à mais difícil.
+      </PageHeader>
 
       <CertificationGrid
         certifications={list}

@@ -45,7 +45,7 @@ A user created in Cognito with a temporary password gets the `NEW_PASSWORD_REQUI
 
 ```
 app/layout.tsx                                          "/" root layout, no auth
-app/page.tsx                                             "/" — redirect based on getSession()
+app/page.tsx                                             "/" — landing for visitors (app/components/landing/*), redirect to /certificacoes if getSession()
 app/login/page.tsx, app/login/actions.ts                 "/login" (server actions: login, logout)
 app/hub/page.tsx                                          "/hub" — just redirect("/certificacoes"), legacy path kept alive
 app/exam/[slug]/page.tsx                                  "/exam/[slug]" — own getSession(), OUTSIDE (app) group (no sidebar)

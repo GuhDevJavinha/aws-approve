@@ -1,6 +1,7 @@
 "use client";
 
 import type { Ref } from "react";
+import { MONO_LABEL_CLASS } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 import { getQuestionStatus, QUESTION_STATUS_LABEL, type QuestionStatus } from "@/lib/exam/question-status";
 import type { Question, QuestionState } from "@/types/simulado";
@@ -31,13 +32,15 @@ export function QuestionBody({
 
   return (
     <div>
-      <p className="whitespace-pre-wrap text-foreground">{question.stem}</p>
+      <p className="whitespace-pre-wrap text-base/7 font-medium text-foreground">{question.stem}</p>
       {question.code ? (
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 font-mono text-xs">{question.code}</pre>
+        <pre className="mt-4 overflow-x-auto rounded-lg border border-border bg-background/60 p-4 font-mono text-xs">
+          {question.code}
+        </pre>
       ) : null}
       {question.ask ? <p className="mt-4 font-semibold text-foreground">{question.ask}</p> : null}
 
-      <div className="mt-4">
+      <div className="mt-6">
         {question.type === "single" || question.type === "multi" ? (
           <OptionsQuestion
             question={question}
@@ -68,15 +71,15 @@ export function QuestionBody({
           role="group"
           aria-label="Resultado da questão"
           tabIndex={-1}
-          className="mt-4 outline-none"
+          className="mt-6 outline-none"
         >
-          <p className={cn("rounded-lg border px-4 py-2 text-sm font-bold", VERDICT_STYLE[status])}>
+          <p className={cn("rounded-lg border px-4 py-2.5 text-sm font-bold", VERDICT_STYLE[status])}>
             {QUESTION_STATUS_LABEL[status]}
           </p>
           {question.explanation ? (
-            <div className="mt-3 rounded-lg border border-border bg-muted p-4">
-              <p className="text-sm font-semibold text-foreground">Explicação</p>
-              <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">{question.explanation}</p>
+            <div className="mt-3 rounded-lg border border-primary/30 bg-primary/5 p-5">
+              <p className={cn(MONO_LABEL_CLASS, "text-[10px] text-primary dark:text-glow")}>Explicação</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm/6 text-foreground">{question.explanation}</p>
             </div>
           ) : null}
         </div>

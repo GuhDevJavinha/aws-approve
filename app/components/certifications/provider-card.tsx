@@ -17,16 +17,16 @@ export function ProviderCard({
 }) {
   return (
     <Link href={href} className="group block h-full focus-visible:outline-none">
-      <Card className="h-full flex flex-col transition-colors group-hover:border-primary/40 group-focus-visible:border-primary">
+      <Card className="h-full gap-6 transition-colors [--card-spacing:--spacing(6)] group-hover:ring-primary/50 group-focus-visible:ring-2 group-focus-visible:ring-ring">
         <CardHeader>
-          <h2 className="text-lg font-semibold text-foreground">{provider.label}</h2>
+          <h2 className="font-display text-xl tracking-[-0.02em] text-foreground">{provider.label}</h2>
         </CardHeader>
         <CardContent className="flex-1">
           <p className="text-sm text-muted-foreground">{provider.description}</p>
         </CardContent>
-        <CardFooter className="items-center justify-between gap-2">
+        <CardFooter className="items-center justify-between gap-2 border-0 bg-transparent pt-0">
           <Badge variant={isEmpty ? "outline" : "secondary"}>{countLabel}</Badge>
-          <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="size-4 text-primary transition-transform group-hover:translate-x-0.5 dark:text-glow" />
         </CardFooter>
       </Card>
     </Link>

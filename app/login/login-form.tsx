@@ -60,7 +60,7 @@ export function LoginForm({ notice }: { notice: string | null }) {
           </Link>
         ) : null}
 
-        <Button type="submit" disabled={isPending} className="w-full">
+        <Button type="submit" size="lg" disabled={isPending} className="w-full">
           {isPending ? "Enviando…" : challenge ? "Definir nova senha" : "Entrar"}
         </Button>
       </form>

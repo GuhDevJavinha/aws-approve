@@ -12,7 +12,10 @@ export function FormMessage({ error, notice }: { error?: string | null; notice?:
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       role={error ? "alert" : "status"}
-      className={cn("text-sm", error ? "text-destructive" : "text-success")}
+      className={cn(
+        "overflow-hidden rounded-lg border px-3.5 py-2.5 text-sm",
+        error ? "border-destructive/30 bg-destructive/10 text-destructive" : "border-success/30 bg-success/10 text-success"
+      )}
     >
       {text}
     </motion.p>

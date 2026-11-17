@@ -48,7 +48,7 @@ export function SignUpForm({ confirmEmail }: { confirmEmail: string | null }) {
 
         <FormMessage error={state.error} notice={state.notice} />
 
-        <Button type="submit" name="intent" value={pendingEmail ? "confirm" : "signup"} disabled={isPending} className="w-full">
+        <Button type="submit" size="lg" name="intent" value={pendingEmail ? "confirm" : "signup"} disabled={isPending} className="w-full">
           {isPending ? "Enviando…" : pendingEmail ? "Confirmar conta" : "Criar conta"}
         </Button>
         {pendingEmail ? (

@@ -43,7 +43,7 @@ export function ForgotPasswordForm({ initialEmail }: { initialEmail: string }) {
 
         <FormMessage error={state.error} notice={state.notice} />
 
-        <Button type="submit" name="intent" value={pendingEmail ? "reset" : "request"} disabled={isPending} className="w-full">
+        <Button type="submit" size="lg" name="intent" value={pendingEmail ? "reset" : "request"} disabled={isPending} className="w-full">
           {isPending ? "Enviando…" : pendingEmail ? "Redefinir senha" : "Enviar código"}
         </Button>
         {pendingEmail ? (

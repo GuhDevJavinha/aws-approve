@@ -2,7 +2,9 @@
 
 import { startTransition, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { ArrowLeft, ArrowRight, Flag, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { Attempt, ExamConfig, QuestionState, Simulado } from "@/types/simulado";
 import { buildAttempt } from "@/lib/exam/build-attempt";
 import { formatTime } from "@/lib/format-time";
@@ -19,6 +21,7 @@ import { ExamIntro } from "./exam-intro";
 import { ExamNavPanel, type NavItem, type NavTone } from "./exam-nav-panel";
 import { ExamResults } from "./exam-results";
 import { ExamReview } from "./exam-review";
+import { ExamTopbar } from "./exam-topbar";
 import { QuestionBody } from "./question-body";
 import { QuestionCard } from "./question-card";
 
@@ -86,12 +89,15 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   if (paused) {
     return (
       <div className="w-full max-w-3xl mx-auto px-4 py-10 pb-28">
-        <div className="rounded-lg border border-border bg-card p-10 text-center">
-          <p className="text-lg font-semibold text-foreground">Prova pausada</p>
-          <p className="mt-1 text-sm text-muted-foreground">
+        <div className="flex flex-col items-center rounded-xl border border-border bg-card p-10 text-center">
+          <span className="mb-5 flex size-12 items-center justify-center rounded-full border border-border bg-secondary text-primary dark:text-glow">
+            <Pause className="size-5" />
+          </span>
+          <p className="font-display text-xl tracking-[-0.02em] text-foreground">Prova pausada</p>
+          <p className="mt-2 text-sm text-muted-foreground">
             Suas respostas estão salvas. Continue quando estiver pronto.
           </p>
-          <Button type="button" className="mt-5" onClick={() => setPaused(false)}>
+          <Button type="button" size="lg" className="mt-6" onClick={() => setPaused(false)}>
             Continuar
           </Button>
         </div>
@@ -195,92 +201,113 @@ export function ExamRunner({ simulado }: { simulado: Simulado }) {
   const isFirst = attempt.currentIndex === 0;
   const isLast = attempt.currentIndex >= attempt.order.length - 1;
 
-  return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-10 pb-28">
-      {showNav ? (
-        <ExamNavPanel
-          items={navItems}
-          legend={attempt.config.immediateFeedback ? IMMEDIATE_FEEDBACK_LEGEND : RUNNING_LEGEND}
-          currentIndex={attempt.currentIndex}
-          onSelect={goTo}
-        />
-      ) : null}
+  const progressPercent = ((attempt.currentIndex + 1) / attempt.order.length) * 100;
 
-      <QuestionCard
-        index={attempt.currentIndex}
-        total={attempt.order.length}
-        type={question.type}
-        actions={
-          <>
-            {attempt.config.timerEnabled ? (
-              <span
-                className={`font-mono text-xs font-bold ${
-                  attempt.secondsRemaining <= 300 ? "text-destructive" : "text-muted-foreground"
-                }`}
-              >
-                {formatTime(attempt.secondsRemaining)}
-              </span>
-            ) : null}
-            {!attempt.config.timerEnabled ? (
-              <Button type="button" variant="ghost" size="sm" onClick={() => setPaused(true)}>
-                Pausar
-              </Button>
-            ) : null}
+  return (
+    <>
+      <ExamTopbar examCode={simulado.examCode} title={simulado.title} progress={progressPercent}>
+        {attempt.config.timerEnabled ? (
+          <TimerPill seconds={attempt.secondsRemaining} />
+        ) : (
+          <Button type="button" variant="outline" size="sm" onClick={() => setPaused(true)}>
+            Pausar
+          </Button>
+        )}
+        <Button type="button" size="sm" onClick={requestFinish}>
+          Finalizar
+        </Button>
+      </ExamTopbar>
+
+      <div className="w-full max-w-3xl mx-auto px-4 py-8 pb-28">
+        {showNav ? (
+          <ExamNavPanel
+            items={navItems}
+            legend={attempt.config.immediateFeedback ? IMMEDIATE_FEEDBACK_LEGEND : RUNNING_LEGEND}
+            currentIndex={attempt.currentIndex}
+            onSelect={goTo}
+          />
+        ) : null}
+
+        <QuestionCard
+          index={attempt.currentIndex}
+          total={attempt.order.length}
+          type={question.type}
+          actions={
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               className="ml-auto"
               onClick={() => updateState({ flagged: !state.flagged })}
             >
+              <Flag className={cn(state.flagged && "fill-current")} />
               {state.flagged ? "Marcada para revisão" : "Marcar para revisão"}
             </Button>
-          </>
-        }
-      >
-        <QuestionBody
-          question={question}
-          state={state}
-          revealAnswer={state.locked}
-          feedbackRef={feedbackRef}
-          onChange={updateState}
-        />
-        {awaitingConfirmation ? (
-          <Button
-            type="button"
-            className="mt-4"
-            disabled={!isQuestionReady(question, state)}
-            onClick={confirmAnswer}
-          >
-            Confirmar resposta
-          </Button>
-        ) : null}
-      </QuestionCard>
+          }
+        >
+          <QuestionBody
+            question={question}
+            state={state}
+            revealAnswer={state.locked}
+            feedbackRef={feedbackRef}
+            onChange={updateState}
+          />
+          {awaitingConfirmation ? (
+            <Button
+              type="button"
+              size="lg"
+              className="mt-6"
+              disabled={!isQuestionReady(question, state)}
+              onClick={confirmAnswer}
+            >
+              Confirmar resposta
+            </Button>
+          ) : null}
+        </QuestionCard>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-border bg-card px-4 py-3">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3">
-          <span className="mr-auto text-sm text-muted-foreground">
-            Respondidas <b className="text-foreground">{answeredCount}</b> de {attempt.order.length}
-          </span>
-          <Button type="button" variant="outline" onClick={() => setShowNav((v) => !v)}>
-            {showNav ? "Fechar painel" : "Painel de questões"}
-          </Button>
-          <Button type="button" variant="outline" onClick={requestFinish}>
-            Finalizar
-          </Button>
-          <Button type="button" variant="secondary" disabled={isFirst} onClick={() => goTo(attempt.currentIndex - 1)}>
-            Anterior
-          </Button>
-          <Button
-            type="button"
-            variant={awaitingConfirmation ? "outline" : "default"}
-            disabled={isLast}
-            onClick={() => goTo(attempt.currentIndex + 1)}
-          >
-            Próxima
-          </Button>
+        <div className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-background/85 px-4 py-3 backdrop-blur">
+          <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3">
+            <span className="mr-auto text-sm text-muted-foreground">
+              Respondidas <b className="text-foreground">{answeredCount}</b> de {attempt.order.length}
+            </span>
+            <Button type="button" variant="outline" onClick={() => setShowNav((v) => !v)}>
+              {showNav ? "Fechar painel" : "Painel de questões"}
+            </Button>
+            <Button type="button" variant="outline" disabled={isFirst} onClick={() => goTo(attempt.currentIndex - 1)}>
+              <ArrowLeft />
+              Anterior
+            </Button>
+            <Button
+              type="button"
+              variant={awaitingConfirmation ? "outline" : "default"}
+              disabled={isLast}
+              onClick={() => goTo(attempt.currentIndex + 1)}
+            >
+              Próxima
+              <ArrowRight />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
+  );
+}
+
+function TimerPill({ seconds }: { seconds: number }) {
+  const isRunningOut = seconds <= 300;
+
+  return (
+    <span
+      className={cn(
+        "inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card px-3.5 font-mono text-xs font-bold tabular-nums",
+        isRunningOut ? "text-warning" : "text-foreground"
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn("size-1.5 rounded-full", isRunningOut ? "bg-warning motion-safe:animate-pulse" : "bg-success")}
+      />
+      {formatTime(seconds)}
+    </span>
   );
 }

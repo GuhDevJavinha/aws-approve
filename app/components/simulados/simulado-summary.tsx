@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { getBestScore } from "@/lib/storage/attempt-storage";
+import { MONO_LABEL_CLASS } from "@/lib/styles";
+import { cn } from "@/lib/utils";
 import type { Certification } from "@/types/certification";
 
 const emptySubscribe = () => () => {};
@@ -33,14 +35,16 @@ export function SimuladoSummary({
   );
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <p className="text-[10px] tracking-[.16em] uppercase text-muted-foreground font-bold">
+    <Card className="max-w-2xl gap-6 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)]">
+      <CardHeader className="gap-3">
+        <p className={cn(MONO_LABEL_CLASS, "w-fit rounded-md border border-border bg-secondary px-2 py-0.5 text-[10px]")}>
           {certification.code || "Simulado"}
         </p>
-        <h2 className="text-xl font-semibold text-foreground">{certification.title}</h2>
+        <h2 className="font-display text-2xl leading-tight tracking-[-0.02em] text-foreground">
+          {certification.title}
+        </h2>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-5">
         <dl className="grid gap-3 sm:grid-cols-2">
           <Fact label="Banco de questões" value={`${bankSize} questões`} />
           <Fact label="Prova oficial" value={`${examQuestionCount} questões`} />
@@ -48,12 +52,12 @@ export function SimuladoSummary({
           <Fact label="Nota de aprovação" value={`${passingScore}%`} />
         </dl>
         {bestScore === null ? null : (
-          <Badge variant="secondary" className="w-fit">
+          <Badge variant="secondary" className="w-fit font-mono">
             Melhor nota: {bestScore}%
           </Badge>
         )}
       </CardContent>
-      <CardFooter className="flex-wrap gap-2">
+      <CardFooter className="flex-wrap gap-3 border-0 bg-transparent pt-0">
         <Link href={`/exam/${simuladoSlug}`} className={buttonVariants({ size: "lg" })}>
           <Play className="size-4" />
           Configurar e iniciar
@@ -74,11 +78,9 @@ export function SimuladoSummary({
 
 function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="text-[10px] tracking-[.16em] uppercase text-muted-foreground font-bold">
-        {label}
-      </dt>
-      <dd className="text-sm text-foreground">{value}</dd>
+    <div className="rounded-lg border border-border bg-background/50 px-4 py-3.5">
+      <dt className={cn(MONO_LABEL_CLASS, "text-[10px]")}>{label}</dt>
+      <dd className="mt-1.5 font-display text-lg tracking-[-0.02em] text-foreground">{value}</dd>
     </div>
   );
 }

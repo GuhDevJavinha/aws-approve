@@ -22,7 +22,7 @@ export default async function SimuladoPage(
     : undefined;
 
   return (
-    <div className="mx-auto max-w-6xl flex flex-col gap-6">
+    <div className="mx-auto max-w-6xl flex flex-col gap-8">
       <Breadcrumb
         crumbs={[
           { label: "Simulados", href: "/simulados" },

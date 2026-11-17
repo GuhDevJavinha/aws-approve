@@ -12,10 +12,12 @@ export function NoSimulado({
   providerLabel: string;
 }) {
   return (
-    <Card className="max-w-2xl">
-      <CardHeader className="items-start gap-2">
-        <Clock className="size-5 text-muted-foreground" />
-        <h2 className="text-xl font-semibold text-foreground">Sem simulados</h2>
+    <Card className="max-w-2xl gap-6 [--card-spacing:--spacing(6)] sm:[--card-spacing:--spacing(8)]">
+      <CardHeader className="items-start gap-4">
+        <span className="flex size-10 items-center justify-center rounded-full border border-border bg-secondary text-muted-foreground">
+          <Clock className="size-5" />
+        </span>
+        <h2 className="font-display text-2xl tracking-[-0.02em] text-foreground">Sem simulados</h2>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <p className="text-sm text-muted-foreground">
@@ -27,7 +29,7 @@ export function NoSimulado({
           Até lá, a documentação oficial é o melhor caminho.
         </p>
       </CardContent>
-      <CardFooter className="flex-wrap gap-2">
+      <CardFooter className="flex-wrap gap-3 border-0 bg-transparent pt-0">
         <a
           href={certification.studyUrl}
           target="_blank"
