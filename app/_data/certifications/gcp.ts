@@ -16,6 +16,7 @@ export const gcpCertifications: Certification[] = [
     title: "Cloud Digital Leader",
     tier: "foundational",
     studyUrl: `${LEARN}/cloud-digital-leader`,
+    simuladoSlug: "cloud-digital-leader",
   },
   {
     id: "gcp-associate-cloud-engineer",

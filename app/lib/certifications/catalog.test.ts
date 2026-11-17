@@ -217,9 +217,10 @@ describe("countsForProvider", () => {
     expect(counts.withSimulado).toBe(simuladosForProvider("aws").length);
   });
 
-  it("reports zero simulados for providers that have none yet", () => {
-    expect(countsForProvider("gcp").withSimulado).toBe(0);
-    expect(countsForProvider("gcp").total).toBeGreaterThan(0);
+  it("reports only the Cloud Digital Leader simulado for gcp", () => {
+    expect(countsForProvider("gcp").withSimulado).toBe(1);
+    expect(simuladosForProvider("gcp").map((c) => c.id)).toEqual(["gcp-cloud-digital-leader"]);
+    expect(countsForProvider("gcp").total).toBeGreaterThan(1);
   });
 });
 
